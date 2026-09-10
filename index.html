@@ -624,6 +624,13 @@ input,textarea,select{
 }
 </style>
 
+
+<style id="notarium-native-math-fix">
+  #pane-math .ultimate-card{cursor:pointer;transition:transform .15s ease,border-color .15s ease}
+  #pane-math .ultimate-card:hover{transform:translateY(-2px);border-color:var(--amber-500)}
+  #pane-math .ultimate-card strong{font-size:12px}
+  #pane-math .ultimate-card small{font-size:10px}
+</style>
 </head>
 <body data-theme="light">
 <div id="app">
@@ -3395,6 +3402,7 @@ Finger: Blatt bewegen · Stift: Schreiben
         <button class="ultimate-tab" data-pane="study">🧠 Lernen</button>
         <button class="ultimate-tab" data-pane="tools">🛠 Tools</button>
         <button class="ultimate-tab" data-pane="data">💾 Daten</button>
+        <button class="ultimate-tab" data-pane="math">📐 Mathematik</button>
       </div>
 
       <div class="ultimate-pane active" id="pane-themes">
@@ -3449,6 +3457,30 @@ Finger: Blatt bewegen · Stift: Schreiben
         <div class="feature-row"><div><label>Lokale Speicherung</label><small>IndexedDB + Autosave sind bereits aktiv.</small></div><span style="color:var(--amber-600);font-weight:700">Aktiv</span></div>
       </div>
 
+      <div class="ultimate-pane" id="pane-math">
+        <div style="padding:2px 0 10px;color:var(--text-muted);font-size:11px;line-height:1.45">
+          Fertige mathematische Vorlagen direkt für deine Notizen. Klicke eine Vorlage an, um sie als Bild in die aktuelle Seite zu übernehmen.
+        </div>
+        <div class="ultimate-grid">
+          <div class="ultimate-card" data-math-open="coord2d"><strong>📈 2D-Koordinatensystem</strong><small>Achsen, Raster und Beschriftung</small></div>
+          <div class="ultimate-card" data-math-open="coord3d"><strong>🧊 3D-Koordinatensystem</strong><small>x-, y- und z-Achse</small></div>
+          <div class="ultimate-card" data-math-open="vectors"><strong>➤ Vektoren</strong><small>Vektordarstellung</small></div>
+          <div class="ultimate-card" data-math-open="triangle"><strong>△ Dreieck</strong><small>Seiten, Höhe und Punkte</small></div>
+          <div class="ultimate-card" data-math-open="circle"><strong>○ Kreis</strong><small>Radius und Durchmesser</small></div>
+          <div class="ultimate-card" data-math-open="cube3d"><strong>🧊 Würfel 3D</strong><small>Räumliche Darstellung</small></div>
+          <div class="ultimate-card" data-math-open="parabola"><strong>∪ Parabel</strong><small>Quadratische Funktion</small></div>
+          <div class="ultimate-card" data-math-open="trig"><strong>〰 Trigonometrie</strong><small>Sinus, Cosinus und Tangens</small></div>
+          <div class="ultimate-card" data-math-open="numberline"><strong>↔ Zahlenstrahl</strong><small>Positive und negative Zahlen</small></div>
+          <div class="ultimate-card" data-math-open="matrix"><strong>▦ Matrix</strong><small>Lineare Algebra</small></div>
+          <div class="ultimate-card" data-math-open="probability"><strong>🌳 Wahrscheinlichkeit</strong><small>Baumdiagramm</small></div>
+          <div class="ultimate-card" data-math-open="integral"><strong>∫ Integral</strong><small>Fläche unter einer Kurve</small></div>
+          <div class="ultimate-card" data-math-open="formula"><strong>ƒ Formelsammlung</strong><small>Wichtige Formeln</small></div>
+          <div class="ultimate-card" data-math-open="geometry"><strong>◇ Geometrie</strong><small>Grundformen</small></div>
+        </div>
+        <div class="upgrade-info"><b>💡 So funktioniert es:</b> Vorlage auswählen → Vorschau ansehen → „In Notizbuch importieren“. Die Grafik wird direkt auf deiner aktuellen Seite platziert und kann dort verschoben und skaliert werden.</div>
+        <div class="modal-actions"><button class="btn btn-primary" id="open-math-studio">Alle Mathe-Vorlagen öffnen</button></div>
+      </div>
+
       <div class="modal-actions"><button class="btn btn-ghost" id="ultimate-close">Schließen</button></div>
     </div>`);
 
@@ -3457,6 +3489,17 @@ Finger: Blatt bewegen · Stift: Schreiben
       document.querySelectorAll('.ultimate-pane').forEach(p=>p.classList.remove('active'));
       tab.classList.add('active'); document.getElementById('pane-'+tab.dataset.pane).classList.add('active');
     });
+    document.querySelectorAll('[data-math-open]').forEach(c=>c.onclick=()=>{
+      const itemId=c.dataset.mathOpen;
+      const item=window.NOTARIUM_MATH?.find(x=>x.id===itemId);
+      if(item && typeof window.openMathPreview==='function') window.openMathPreview(item);
+      else if(item && typeof window.openMathStudio==='function') window.openMathStudio(itemId);
+      else toast('Mathe-Modul wird geladen…');
+    });
+    document.getElementById('open-math-studio').onclick=()=>{
+      if(typeof window.openMathStudio==='function') window.openMathStudio();
+      else toast('Mathe-Modul wird geladen…');
+    };
     document.querySelectorAll('[data-theme]').forEach(c=>c.onclick=()=>{applyTheme(c.dataset.theme);toast('Design geändert');});
     document.querySelectorAll('[data-template]').forEach(c=>c.onclick=()=>{
       if(NAV.view==='editor'&&STATE.pages[EDITOR.pageId]){applyPageChanges({template:c.dataset.template,background:null});toast('Template angewendet');}
@@ -4441,61 +4484,12 @@ Finger: Blatt bewegen · Stift: Schreiben
     updateSelected();
   }
 
-  window.openMathStudio=()=>{filter='Alle';query='';selected=MATH[1];renderMathStudio()};
+  window.openMathStudio=(id)=>{filter='Alle';query='';selected=MATH.find(x=>x.id===id)||MATH[0];renderMathStudio()};
 
-  /* Add Mathematics to the existing Extras tabs. */
-  const originalHub=window.openUltimateHub;
-  if(typeof originalHub==='function'){
-    window.openUltimateHub=function(){
-      originalHub();
-      setTimeout(()=>{
-        const tabs=document.querySelectorAll('.ultimate-tab');
-        if(!tabs.length || document.getElementById('hub-math')) return;
-        const mathTab=document.createElement('button');
-        mathTab.className='ultimate-tab';
-        mathTab.id='hub-math';
-        mathTab.dataset.pane='math';
-        mathTab.textContent='📐 Mathematik';
-        tabs[tabs.length-1].insertAdjacentElement('afterend',mathTab);
-        const close=document.getElementById('ultimate-close')?.parentElement;
-        const pane=document.createElement('div');
-        pane.className='ultimate-pane';pane.id='pane-math';
-        pane.innerHTML=`<div class="ultimate-grid">
-          <div class="ultimate-card" id="math-coord2d"><strong>📈 2D Koordinatensystem</strong><small>Fertige Grafik importieren</small></div>
-          <div class="ultimate-card" id="math-coord3d"><strong>🧊 3D Koordinatensystem</strong><small>Räumliche Achsen importieren</small></div>
-          <div class="ultimate-card" id="math-vectors"><strong>➤ Vektoren</strong><small>Vektordiagramm</small></div>
-          <div class="ultimate-card" id="math-geometry"><strong>△ Geometrie</strong><small>Formen und Konstruktionen</small></div>
-          <div class="ultimate-card" id="math-analysis"><strong>∫ Analysis</strong><small>Funktionen und Integrale</small></div>
-          <div class="ultimate-card" id="math-algebra"><strong>Σ Algebra</strong><small>Matrizen und Zahlenstrahlen</small></div>
-          <div class="ultimate-card" id="math-stat"><strong>📊 Statistik</strong><small>Wahrscheinlichkeit</small></div>
-          <div class="ultimate-card" id="math-formula"><strong>ƒ Formelsammlung</strong><small>Formeln als Bild</small></div>
-        </div>
-        <div class="upgrade-info">Alle mathematischen Vorlagen werden <b>lokal als SVG-Bild</b> erzeugt. Du kannst sie direkt in deine aktuelle Seite importieren, verschieben, skalieren und anschließend als PNG/PDF exportieren.</div>
-        <div class="modal-actions"><button class="btn btn-primary" id="open-math-studio">Komplette Mathe-Galerie</button></div>`;
-        const dataPane=document.getElementById('pane-data');
-        const parent=dataPane?.parentElement;
-        if(parent) parent.insertBefore(pane,dataPane);
-        else document.querySelector('.ultimate-modal')?.appendChild(pane);
-        mathTab.onclick=()=>{
-          document.querySelectorAll('.ultimate-tab').forEach(t=>t.classList.remove('active'));
-          document.querySelectorAll('.ultimate-pane').forEach(p=>p.classList.remove('active'));
-          mathTab.classList.add('active');pane.classList.add('active');
-        };
-        document.getElementById('open-math-studio').onclick=openMathStudio;
-        const direct={
-          'math-coord2d':'coord2d','math-coord3d':'coord3d','math-vectors':'vectors',
-          'math-geometry':'geometry','math-analysis':'integral','math-algebra':'matrix',
-          'math-stat':'probability','math-formula':'formula'
-        };
-        Object.entries(direct).forEach(([id,mid])=>{
-          document.getElementById(id).onclick=()=>{
-            const item=MATH.find(x=>x.id===mid);
-            if(item) importMathImage(item);
-          };
-        });
-      },50);
-    };
-  }
+  /* Expose the math catalogue for the native Extras tab. */
+  window.NOTARIUM_MATH=MATH;
+  window.openMathPreview=(item)=>{ selected=item; renderMathStudio(); };
+
 })();
 </script>
 
