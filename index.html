@@ -342,6 +342,53 @@ input,textarea{font-family:inherit;}
   .card-grid{gap:18px 14px;}
 }
 
+
+/* --- Tablet canvas interaction / floating geometry tools --- */
+html, body {
+  overscroll-behavior: none;
+}
+#canvasWrap, #pageCanvas, canvas {
+  -webkit-user-select: none;
+  user-select: none;
+}
+#canvasWrap {
+  touch-action: none;
+}
+
+/* Geometry tools get a large invisible drag handle around their visible body. */
+.measure-tool {
+  touch-action: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  cursor: grab;
+  position: absolute;
+  z-index: 50;
+}
+.measure-tool.dragging {
+  cursor: grabbing;
+}
+.measure-tool .tool-body,
+.measure-tool .drag-handle {
+  touch-action: none !important;
+}
+
+/* Don't let browser gestures steal pointer input while a tool is being moved. */
+.geometry-overlay {
+  touch-action: none !important;
+  pointer-events: auto;
+}
+
+/* On touch devices, keep the editor comfortable while allowing the page itself to pan. */
+@media (pointer: coarse) {
+  #canvasWrap {
+    touch-action: none;
+  }
+  .measure-tool {
+    min-width: 56px;
+    min-height: 56px;
+  }
+}
+
 </style>
 </head>
 <body data-theme="light">
@@ -2480,6 +2527,184 @@ if('serviceWorker' in navigator && (location.protocol==='http:' || location.prot
   });
 }
 </script>
+
+<script>
+/* ============================================================
+   NOTARIUM – Tablet input controller
+   Finger = pan/zoom the sheet
+   Pen/stylus = write/draw
+   Mouse = normal desktop interaction
+   ============================================================ */
+(() => {
+  const isStylus = e => e && (
+    e.pointerType === "pen" ||
+    (typeof e.pointerType === "string" && e.pointerType.toLowerCase() === "pen")
+  );
+
+  const isCanvasLike = el => {
+    if (!el) return false;
+    return !!el.closest?.("#canvasWrap, #pageCanvas, canvas");
+  };
+
+  let pan = null;
+  let activePen = null;
+
+  function canvasEl() {
+    return document.querySelector("#pageCanvas") ||
+           document.querySelector("#canvasWrap canvas") ||
+           document.querySelector("canvas");
+  }
+
+  function wrapEl() {
+    return document.querySelector("#canvasWrap");
+  }
+
+  // Finger panning is deliberately handled outside the drawing code.
+  // We only activate it when the selected pointer is a finger.
+  document.addEventListener("pointerdown", e => {
+    if (e.pointerType !== "touch") return;
+    if (!isCanvasLike(e.target)) return;
+
+    const wrap = wrapEl();
+    if (!wrap) return;
+
+    pan = {
+      id: e.pointerId,
+      x: e.clientX,
+      y: e.clientY,
+      sx: wrap.scrollLeft,
+      sy: wrap.scrollTop
+    };
+    try { wrap.setPointerCapture(e.pointerId); } catch {}
+  }, {capture: true, passive: false});
+
+  document.addEventListener("pointermove", e => {
+    if (!pan || e.pointerId !== pan.id) return;
+    const wrap = wrapEl();
+    if (!wrap) return;
+
+    e.preventDefault();
+    wrap.scrollLeft = pan.sx - (e.clientX - pan.x);
+    wrap.scrollTop  = pan.sy - (e.clientY - pan.y);
+  }, {capture: true, passive: false});
+
+  const endPan = e => {
+    if (pan && e.pointerId === pan.id) {
+      try { wrapEl()?.releasePointerCapture(e.pointerId); } catch {}
+      pan = null;
+    }
+  };
+  document.addEventListener("pointerup", endPan, {capture: true});
+  document.addEventListener("pointercancel", endPan, {capture: true});
+
+  // Prevent the normal mouse/touch drawing handlers from treating a finger
+  // as ink. This is especially important on Surface/iPad/Android tablets.
+  document.addEventListener("pointerdown", e => {
+    if (!isStylus(e)) return;
+    activePen = e.pointerId;
+  }, {capture: true});
+
+  document.addEventListener("pointerup", e => {
+    if (e.pointerId === activePen) activePen = null;
+  }, {capture: true});
+
+  // Make existing floating geometry instruments much easier to drag.
+  // We use pointer events, so mouse, Apple Pencil, Surface Pen and S Pen
+  // all work consistently.
+  function installGeometryDragging() {
+    const candidates = document.querySelectorAll(
+      ".measure-tool, .ruler, .triangle, .protractor, " +
+      "[data-tool='ruler'], [data-tool='triangle'], [data-tool='protractor'], " +
+      "[data-tool='angle'], [id*='ruler'], [id*='triangle'], [id*='protractor']"
+    );
+
+    candidates.forEach(tool => {
+      if (tool.dataset.notariumDragInstalled === "1") return;
+      tool.dataset.notariumDragInstalled = "1";
+
+      tool.style.touchAction = "none";
+
+      let drag = null;
+
+      const down = e => {
+        // If an actual button/input inside the instrument was clicked,
+        // preserve that control.
+        if (e.target.closest("button, input, select, textarea")) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const rect = tool.getBoundingClientRect();
+        drag = {
+          id: e.pointerId,
+          x: e.clientX,
+          y: e.clientY,
+          left: rect.left,
+          top: rect.top
+        };
+
+        tool.classList.add("dragging");
+        try { tool.setPointerCapture(e.pointerId); } catch {}
+      };
+
+      const move = e => {
+        if (!drag || e.pointerId !== drag.id) return;
+        e.preventDefault();
+
+        const dx = e.clientX - drag.x;
+        const dy = e.clientY - drag.y;
+
+        // Prefer transform when the original tool already uses one.
+        // Otherwise use left/top.
+        tool.style.left = `${drag.left + dx}px`;
+        tool.style.top = `${drag.top + dy}px`;
+      };
+
+      const up = e => {
+        if (!drag || e.pointerId !== drag.id) return;
+        try { tool.releasePointerCapture(e.pointerId); } catch {}
+        drag = null;
+        tool.classList.remove("dragging");
+      };
+
+      tool.addEventListener("pointerdown", down, {passive: false});
+      tool.addEventListener("pointermove", move, {passive: false});
+      tool.addEventListener("pointerup", up);
+      tool.addEventListener("pointercancel", up);
+    });
+  }
+
+  installGeometryDragging();
+
+  // Re-run after page/tool redraws.
+  const observer = new MutationObserver(() => installGeometryDragging());
+  observer.observe(document.body, {childList: true, subtree: true});
+})();
+</script>
+
+
+<div id="tabletInputHint" style="display:none;position:fixed;left:50%;bottom:72px;
+transform:translateX(-50%);z-index:9999;padding:9px 14px;border-radius:12px;
+background:rgba(25,25,28,.92);color:#fff;font:500 13px system-ui;
+box-shadow:0 4px 18px rgba(0,0,0,.25);pointer-events:none;">
+Finger: Blatt bewegen · Stift: Schreiben
+</div>
+<script>
+(() => {
+  const hint = document.getElementById("tabletInputHint");
+  if (!hint) return;
+  let timer;
+  const show = () => {
+    hint.style.display = "block";
+    clearTimeout(timer);
+    timer = setTimeout(() => hint.style.display = "none", 2200);
+  };
+  window.addEventListener("pointerdown", e => {
+    if (e.pointerType === "touch" || e.pointerType === "pen") show();
+  }, {passive:true});
+})();
+</script>
+
 </body>
 
 
