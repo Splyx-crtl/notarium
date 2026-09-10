@@ -196,6 +196,7 @@ input,textarea{font-family:inherit;}
 }
 .tool-btn:hover{background:var(--paper-200);}
 .tool-btn.active{background:var(--ink-800); color:var(--amber-500);}
+.tool-btn.pan-mode{background:var(--amber-500); color:var(--ink-900);}
 .tool-btn svg{width:19px;height:19px;}
 .swatch{width:18px;height:18px;border-radius:50%; border:2px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,.25);}
 .mini-label{font-size:9.5px; position:absolute; bottom:2px; right:3px; font-weight:700;}
@@ -390,6 +391,239 @@ html, body {
 }
 
 </style>
+
+<style id="notarium-ultimate-css">
+/* ===== NOTARIUM ULTIMATE PACK ===== */
+.ultimate-modal{max-width:780px!important;width:min(94vw,780px)!important}
+.ultimate-tabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--border-soft);padding-bottom:9px;margin-bottom:12px}
+.ultimate-tab{border:0;background:var(--paper-200);color:var(--text-main);padding:8px 11px;border-radius:9px;cursor:pointer;font-size:12px;font-weight:600}
+.ultimate-tab.active{background:var(--ink-800);color:var(--amber-500)}
+.ultimate-pane{display:none}
+.ultimate-pane.active{display:block}
+.ultimate-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}
+.ultimate-card{border:1px solid var(--border-soft);background:var(--bg-surface);border-radius:12px;padding:12px;cursor:pointer;transition:.14s}
+.ultimate-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-1);border-color:var(--amber-500)}
+.ultimate-card strong{display:block;font-size:13px;margin-bottom:4px}
+.ultimate-card small{color:var(--text-muted);font-size:11px;line-height:1.35}
+.theme-preview{height:58px;border-radius:9px;margin-bottom:8px;border:1px solid rgba(0,0,0,.08);display:flex;overflow:hidden}
+.theme-preview .a{width:24%;}.theme-preview .b{flex:1;}.theme-preview .c{width:18%}
+.feature-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--border-soft)}
+.feature-row:last-child{border-bottom:0}
+.feature-row label{font-size:12.5px;color:var(--text-main)}
+.feature-row small{display:block;color:var(--text-muted);margin-top:2px}
+.study-timer{font-size:48px;font-variant-numeric:tabular-nums;text-align:center;font-weight:700;padding:15px 0 8px}
+.study-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.study-actions .btn{min-width:110px}
+.flashcard{min-height:220px;border:1px solid var(--border-soft);border-radius:16px;padding:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(135deg,var(--bg-surface),var(--paper-200));cursor:pointer}
+.flashcard .fc-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:9px}
+.flashcard .fc-main{font-size:27px;font-weight:700;line-height:1.25}
+.flashcard .fc-answer{margin-top:16px;color:var(--text-muted);font-size:16px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:10px 0}
+.stat{background:var(--paper-200);border-radius:10px;padding:10px;text-align:center}
+.stat b{font-size:20px;display:block}.stat span{font-size:10px;color:var(--text-muted)}
+.template-badge{position:absolute;right:8px;bottom:8px;font-size:9px;background:rgba(255,255,255,.88);padding:3px 6px;border-radius:99px}
+.template-card{position:relative}
+@media(max-width:700px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+
+
+<style id="notarium-modern-hud-css">
+/* ===== NOTARIUM MODERN HUD ===== */
+:root{
+  --hud-radius:14px;
+  --hud-radius-sm:10px;
+  --hud-glass:rgba(255,255,255,.78);
+  --hud-glass-strong:rgba(255,255,255,.92);
+  --hud-shadow:0 14px 40px rgba(20,30,45,.12);
+}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,textarea,select{font:inherit}
+.topbar{
+  min-height:58px!important;
+  padding:8px 12px!important;
+  gap:8px!important;
+  border-bottom:1px solid rgba(0,0,0,.07)!important;
+  box-shadow:0 2px 18px rgba(20,30,45,.06)!important;
+  backdrop-filter:blur(18px);
+  z-index:20;
+}
+.topbar .group{gap:4px!important}
+.topbar .icon-btn,.topbar .tool-btn,.topbar button{
+  border-radius:11px!important;
+  transition:transform .14s ease,background .14s ease,box-shadow .14s ease,border-color .14s ease;
+}
+.topbar .icon-btn:hover,.topbar .tool-btn:hover,.topbar button:hover{
+  transform:translateY(-1px);
+}
+.topbar .icon-btn.active,.topbar .tool-btn.active{
+  box-shadow:0 5px 16px rgba(0,0,0,.10)!important;
+}
+#btn-extras{
+  width:40px;height:40px;border-radius:12px!important;
+  background:linear-gradient(135deg,rgba(255,255,255,.95),rgba(245,244,240,.9))!important;
+  border:1px solid rgba(0,0,0,.07)!important;
+}
+.search-box{
+  min-width:190px!important;
+  height:40px!important;
+  border-radius:12px!important;
+  border:1px solid rgba(0,0,0,.08)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7)!important;
+}
+.search-box input{font-size:12px!important}
+.sidebar{
+  border-right:1px solid rgba(0,0,0,.07)!important;
+  box-shadow:3px 0 20px rgba(20,30,45,.035)!important;
+  background:rgba(248,249,251,.88)!important;
+  backdrop-filter:blur(16px);
+}
+.sidebar .section-title{
+  letter-spacing:.02em;
+}
+.nav-item,.tree-row,.sidebar button{
+  border-radius:10px!important;
+}
+.nav-item.active,.tree-row.active{
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.035),0 4px 12px rgba(20,30,45,.05);
+}
+#canvas-wrap{
+  background:
+    radial-gradient(circle at 20% 0%,rgba(255,255,255,.95),transparent 30%),
+    radial-gradient(circle at 80% 0%,rgba(240,240,240,.75),transparent 28%),
+    var(--bg-app)!important;
+  padding:34px!important;
+}
+#page-stage{
+  border-radius:6px;
+  box-shadow:0 18px 55px rgba(24,34,48,.14),0 2px 8px rgba(24,34,48,.07)!important;
+}
+.modal-backdrop{
+  backdrop-filter:blur(12px)!important;
+  background:rgba(10,15,25,.28)!important;
+}
+.modal,.dialog,.popover,.menu{
+  border-radius:18px!important;
+  box-shadow:0 28px 80px rgba(15,25,40,.20)!important;
+  border:1px solid rgba(255,255,255,.45)!important;
+  backdrop-filter:blur(20px);
+}
+.modal h3{font-size:19px!important;letter-spacing:-.02em}
+.btn{
+  min-height:38px;
+  border-radius:11px!important;
+  border:1px solid rgba(0,0,0,.07)!important;
+}
+.btn-primary{
+  box-shadow:0 8px 20px rgba(0,0,0,.10);
+}
+input,textarea,select{
+  border-radius:11px!important;
+  border:1px solid rgba(0,0,0,.10)!important;
+  background:rgba(255,255,255,.78)!important;
+}
+.card{
+  border-radius:16px!important;
+  border:1px solid rgba(0,0,0,.07)!important;
+  box-shadow:0 8px 25px rgba(25,35,50,.055)!important;
+  transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease!important;
+}
+.card:hover{
+  transform:translateY(-3px)!important;
+  box-shadow:0 18px 35px rgba(25,35,50,.10)!important;
+}
+.card-thumb{border-radius:13px!important}
+.library-toolbar{
+  padding:10px 12px!important;
+  border-radius:14px!important;
+  background:rgba(255,255,255,.55);
+  backdrop-filter:blur(10px);
+}
+.ultimate-modal{max-width:920px!important}
+.ultimate-tabs{
+  position:sticky;top:0;z-index:2;
+  background:rgba(255,255,255,.86);
+  backdrop-filter:blur(12px);
+  padding:7px;
+  border:1px solid rgba(0,0,0,.06)!important;
+  border-radius:13px!important;
+}
+.ultimate-tab{
+  min-height:36px;
+  border-radius:10px!important;
+  padding:8px 13px!important;
+}
+.ultimate-card{
+  border-radius:15px!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.88),rgba(246,247,249,.72))!important;
+  border:1px solid rgba(0,0,0,.065)!important;
+  box-shadow:0 5px 16px rgba(20,30,45,.045);
+}
+.ultimate-card:hover{
+  border-color:rgba(217,142,43,.5)!important;
+  box-shadow:0 13px 27px rgba(20,30,45,.09);
+}
+.stat{
+  border-radius:13px!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.74),rgba(242,244,247,.74))!important;
+}
+.feature-row{
+  padding:12px 4px!important;
+}
+.tooltip{
+  border-radius:9px!important;
+}
+#notarium-command-palette{
+  position:fixed;inset:0;display:none;align-items:flex-start;justify-content:center;
+  padding-top:10vh;z-index:99999;background:rgba(10,15,25,.28);backdrop-filter:blur(9px);
+}
+#notarium-command-palette.show{display:flex}
+.ncp-window{
+  width:min(680px,92vw);background:rgba(250,251,253,.97);border:1px solid rgba(255,255,255,.65);
+  border-radius:18px;box-shadow:0 30px 90px rgba(10,20,35,.22);overflow:hidden;
+}
+.ncp-head{padding:10px;border-bottom:1px solid rgba(0,0,0,.06)}
+.ncp-head input{
+  width:100%;height:44px;padding:0 14px;border-radius:12px;border:0!important;
+  background:rgba(235,238,243,.9)!important;outline:none;
+}
+.ncp-list{max-height:410px;overflow:auto;padding:7px}
+.ncp-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:11px;cursor:pointer}
+.ncp-item:hover,.ncp-item.selected{background:rgba(0,0,0,.055)}
+.ncp-icon{width:30px;height:30px;display:grid;place-items:center;border-radius:9px;background:rgba(0,0,0,.055)}
+.ncp-item strong{font-size:13px;display:block}.ncp-item span{font-size:11px;color:#727b88}
+.ncp-foot{padding:8px 12px;font-size:10px;color:#7a818d;border-top:1px solid rgba(0,0,0,.06)}
+.np-badge{
+  display:inline-flex;align-items:center;gap:5px;padding:4px 7px;border-radius:99px;
+  font-size:9px;background:rgba(0,0,0,.055);color:inherit
+}
+.np-status{
+  display:flex;align-items:center;gap:7px;font-size:10px;color:var(--text-muted);
+  padding:5px 8px;border-radius:9px;background:rgba(0,0,0,.035)
+}
+.np-dot{width:7px;height:7px;border-radius:50%;background:#54a879;box-shadow:0 0 0 3px rgba(84,168,121,.13)}
+#notarium-bottom-bar{
+  position:fixed;left:50%;bottom:14px;transform:translateX(-50%);
+  display:flex;align-items:center;gap:6px;padding:7px;
+  background:rgba(250,251,253,.78);border:1px solid rgba(255,255,255,.72);
+  backdrop-filter:blur(18px);border-radius:15px;box-shadow:0 14px 38px rgba(15,25,40,.15);
+  z-index:30;
+}
+#notarium-bottom-bar button{
+  width:38px;height:38px;border:0;background:transparent;border-radius:10px;cursor:pointer;font-size:17px;
+}
+#notarium-bottom-bar button:hover{background:rgba(0,0,0,.065)}
+.hud-sep{width:1px;height:22px;background:rgba(0,0,0,.09);margin:0 2px}
+@media(max-width:900px){
+  .search-box{min-width:130px!important}
+  #notarium-bottom-bar{bottom:9px}
+}
+@media(max-width:650px){
+  .search-box{display:none}
+  #canvas-wrap{padding:16px!important}
+  #notarium-bottom-bar{max-width:calc(100vw - 20px);overflow:auto}
+}
+</style>
+
 </head>
 <body data-theme="light">
 <div id="app">
@@ -436,7 +670,9 @@ html, body {
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
       <div class="crumbs" id="crumbs"></div>
-      <div class="topbar-spacer"></div>
+      <button class="icon-btn" id="btn-extras" title="Notarium Extras" aria-label="Notarium Extras">
+        <span style="font-size:18px;">✨</span>
+      </button>
       <div class="search-box">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
         <input type="text" id="search-input" placeholder="Suchen…">
@@ -1431,14 +1667,25 @@ function getActiveSnapLine(p){
 }
 
 /* ---- Zeichen-Interaktion (Pointer-Events) ---- */
-let drawing=false, activeStroke=null, shapeStart=null, selDrag=null, compassState=null;
+let drawing=false, activeStroke=null, shapeStart=null, selDrag=null, compassState=null, sheetPan=null;
 function drawLive(el){ const ctx=document.getElementById('page-canvas').getContext('2d'); drawElement(ctx,el); }
 function evPressure(e){ return (e.pressure && e.pressure>0) ? e.pressure : 0.5; }
 
 function onCanvasPointerDown(e){
   if(NAV.view!=='editor') return;
-  if(EDITOR.textEditing) finalizeText();
   const canvas=document.getElementById('page-canvas');
+
+  // Explicit "Blatt bewegen"-Modus: der Zeiger verschiebt den sichtbaren
+  // Ausschnitt statt auf dem Blatt zu zeichnen.
+  if(EDITOR.tool==='pan'){
+    const wrap=document.getElementById('canvas-wrap');
+    sheetPan={id:e.pointerId,x:e.clientX,y:e.clientY,sx:wrap.scrollLeft,sy:wrap.scrollTop};
+    canvas.setPointerCapture(e.pointerId);
+    e.preventDefault();
+    return;
+  }
+
+  if(EDITOR.textEditing) finalizeText();
   const p=getLogicalPoint(e);
   const tool=EDITOR.tool;
   if(tool==='pen'||tool==='highlighter'){
@@ -1464,6 +1711,13 @@ function onCanvasPointerDown(e){
   }
 }
 function onCanvasPointerMove(e){
+  if(sheetPan && e.pointerId===sheetPan.id){
+    const wrap=document.getElementById('canvas-wrap');
+    wrap.scrollLeft=sheetPan.sx-(e.clientX-sheetPan.x);
+    wrap.scrollTop=sheetPan.sy-(e.clientY-sheetPan.y);
+    e.preventDefault();
+    return;
+  }
   if(!drawing && !selDrag) return;
   const p=getLogicalPoint(e);
   if(activeStroke){
@@ -1490,6 +1744,11 @@ function onCanvasPointerMove(e){
   }
 }
 function onCanvasPointerUp(e){
+  if(sheetPan && e.pointerId===sheetPan.id){
+    try{ document.getElementById('page-canvas').releasePointerCapture(e.pointerId); }catch{}
+    sheetPan=null;
+    return;
+  }
   if(activeStroke){
     let pts=activeStroke.points;
     if(EDITOR.smoothing && !activeStroke.snap && pts.length>2) pts=chaikinSmooth(pts,2);
@@ -2047,6 +2306,9 @@ function buildToolbar(){
     toolBtn('pagesettings',SVG.pageSettings,'Seite: Format, Ausrichtung, Papierart & -farbe',(e)=>togglePopover('pagesettings',e))
   ]));
 
+  const panBtn=toolBtn('pan',`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 11V6a1.5 1.5 0 0 1 3 0v5-6a1.5 1.5 0 0 1 3 0v6-5a1.5 1.5 0 0 1 3 0v7"/><path d="M17 10V8.5a1.5 1.5 0 0 1 3 0V15c0 4-2.7 6-6.5 6h-1C9.8 21 8 20 6.8 18.3L4 14.4a1.5 1.5 0 0 1 2.6-1.5L9 16"/><path d="M8 11V9a1.5 1.5 0 0 1 3 0"/></svg>`,'Blatt bewegen',()=>setTool('pan'));
+  bar.appendChild(group([panBtn]));
+
   const selectBtn=toolBtn('select',SVG.select,'Auswählen',()=>setTool('select'));
   const penBtn=toolBtn('pen',SVG.pen,'Stift (erneut klicken für Optionen)',(e)=>{ if(EDITOR.tool==='pen'){ togglePopover('pen',e); } else { setTool('pen'); document.getElementById('tool-popover').hidden=true; } });
   const hlBtn=toolBtn('highlighter',SVG.highlighter,'Textmarker (erneut klicken für Optionen)',(e)=>{ if(EDITOR.tool==='highlighter'){ togglePopover('highlighter',e);} else { setTool('highlighter'); document.getElementById('tool-popover').hidden=true; } });
@@ -2082,11 +2344,12 @@ function buildToolbar(){
 }
 function setTool(tool){
   EDITOR.tool=tool; EDITOR.selectedId=null; clearSelectionOverlay();
-  document.getElementById('page-canvas').style.cursor = tool==='select'?'default': tool==='text'?'text':'crosshair';
+  document.getElementById('page-canvas').style.cursor =
+    tool==='select'?'default' : tool==='text'?'text' : tool==='pan'?'grab' : 'crosshair';
   updateToolbarActiveStates();
 }
 function updateToolbarActiveStates(){
-  ['select','pen','highlighter','eraser','shape','text','image','compass','ruler','triangle','protractor'].forEach(id=>{
+  ['pan','select','pen','highlighter','eraser','shape','text','image','compass','ruler','triangle','protractor'].forEach(id=>{
     const b=document.getElementById('tb-'+id); if(!b) return;
     let active=false;
     if(id==='ruler') active=EDITOR.geo.ruler.visible;
@@ -2094,6 +2357,7 @@ function updateToolbarActiveStates(){
     else if(id==='protractor') active=EDITOR.geo.protractor.visible;
     else active=EDITOR.tool===id;
     b.classList.toggle('active',active);
+    if(id==='pan') b.classList.toggle('pan-mode',active);
   });
 }
 function colorRow(colors,current,onPick){
@@ -2563,6 +2827,7 @@ if('serviceWorker' in navigator && (location.protocol==='http:' || location.prot
   // We only activate it when the selected pointer is a finger.
   document.addEventListener("pointerdown", e => {
     if (e.pointerType !== "touch") return;
+    if (window.EDITOR && EDITOR.tool === "pan") return;
     if (!isCanvasLike(e.target)) return;
 
     const wrap = wrapEl();
@@ -2702,6 +2967,702 @@ Finger: Blatt bewegen · Stift: Schreiben
   window.addEventListener("pointerdown", e => {
     if (e.pointerType === "touch" || e.pointerType === "pen") show();
   }, {passive:true});
+})();
+</script>
+
+
+<script id="notarium-ultimate-pack">
+(() => {
+  /* =========================================================
+     NOTARIUM ULTIMATE PACK
+     Themes, templates, planning, study tools, tags, quick actions
+     ========================================================= */
+
+  const U = {
+    themeKey: 'notariumUltimateTheme',
+    timer: { running:false, seconds:25*60, total:25*60, mode:'Fokus', interval:null },
+    flash: { cards:[], index:0, show:false }
+  };
+
+  const ORIGINAL_DRAW_TEMPLATE = drawTemplate;
+  const ORIGINAL_TPL_PREVIEW = tplPreviewSvg;
+
+  /* ---------- Extended templates ---------- */
+  const EXTRA_TEMPLATES = [
+    {id:'dot-grid', label:'Punkt-Raster'},
+    {id:'cornell', label:'Cornell Notes'},
+    {id:'math', label:'Mathe'},
+    {id:'weekly', label:'Wochenplan'},
+    {id:'daily', label:'Tagesplan'},
+    {id:'timetable', label:'Stundenplan'},
+    {id:'checklist', label:'Checkliste'},
+    {id:'meeting', label:'Meeting Notes'},
+    {id:'journal', label:'Journal'},
+    {id:'habit', label:'Habit Tracker'},
+    {id:'music', label:'Notenblatt'}
+  ];
+  EXTRA_TEMPLATES.forEach(t => {
+    if(!TEMPLATES.some(x => x.id === t.id)) TEMPLATES.push(t);
+  });
+
+  function gridStep(cmValue){ return cmValue * PX_PER_CM; }
+
+  /* ---------- Rich template drawing ---------- */
+  drawTemplate = function(ctx, template, paperColor, w, h){
+    ORIGINAL_DRAW_TEMPLATE(ctx, template, paperColor, w, h);
+    if(['dot-grid','cornell','math','weekly','daily','timetable','checklist','meeting','journal','habit','music'].indexOf(template)<0) return;
+
+    const dark = isDarkColor(paperColor || '#fff');
+    const ink = dark ? 'rgba(255,255,255,.28)' : 'rgba(35,45,65,.22)';
+    const strong = dark ? 'rgba(255,255,255,.46)' : 'rgba(35,45,65,.38)';
+    const accent = dark ? 'rgba(255,180,90,.55)' : 'rgba(194,72,58,.52)';
+    const m = 1.5 * PX_PER_CM;
+    const cm = gridStep;
+    ctx.save();
+    ctx.strokeStyle = ink; ctx.fillStyle = ink; ctx.lineWidth = 1.1;
+
+    if(template==='dot-grid'){
+      for(let x=m;x<w-m;x+=cm(.5)) for(let y=m;y<h-m;y+=cm(.5)){
+        ctx.beginPath(); ctx.arc(x,y,1.25,0,Math.PI*2); ctx.fill();
+      }
+    }
+    if(template==='cornell'){
+      const cue=5.5*PX_PER_CM, bottom=3.2*PX_PER_CM, line=0.85*PX_PER_CM;
+      ctx.beginPath(); ctx.moveTo(m+cue,m); ctx.lineTo(m+cue,h-bottom); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(m,h-bottom); ctx.lineTo(w-m,h-bottom); ctx.stroke();
+      for(let y=m+line;y<h-bottom;y+=line){ ctx.beginPath(); ctx.moveTo(m+cue,y); ctx.lineTo(w-m,y); ctx.stroke(); }
+      ctx.fillStyle=strong; ctx.font='600 13px Inter,sans-serif'; ctx.fillText('Cues',m+7,m+8);
+      ctx.fillText('Notes',m+cue+8,m+8); ctx.fillText('Summary',m+7,h-bottom+9);
+    }
+    if(template==='math'){
+      const step=cm(.5), darker=dark?'rgba(255,255,255,.22)':'rgba(40,60,100,.19)';
+      ctx.strokeStyle=darker;
+      for(let x=m;x<w-m;x+=step){ctx.beginPath();ctx.moveTo(x,m);ctx.lineTo(x,h-m);ctx.stroke();}
+      for(let y=m;y<h-m;y+=step){ctx.beginPath();ctx.moveTo(m,y);ctx.lineTo(w-m,y);ctx.stroke();}
+      ctx.strokeStyle=strong; ctx.lineWidth=1.6;
+      for(let x=m;x<w-m;x+=cm(1)){ctx.beginPath();ctx.moveTo(x,m);ctx.lineTo(x,h-m);ctx.stroke();}
+      for(let y=m;y<h-m;y+=cm(1)){ctx.beginPath();ctx.moveTo(m,y);ctx.lineTo(w-m,y);ctx.stroke();}
+    }
+    if(template==='weekly'){
+      const top=2.6*PX_PER_CM, days=7, dayW=(w-2*m)/days;
+      ctx.lineWidth=1.2;
+      for(let i=0;i<=days;i++){let x=m+i*dayW;ctx.beginPath();ctx.moveTo(x,m);ctx.lineTo(x,h-m);ctx.stroke();}
+      ctx.beginPath();ctx.moveTo(m,m+top);ctx.lineTo(w-m,m+top);ctx.stroke();
+      ctx.fillStyle=strong;ctx.font='600 12px Inter,sans-serif';
+      ['Mo','Di','Mi','Do','Fr','Sa','So'].forEach((d,i)=>ctx.fillText(d,m+i*dayW+7,m+9));
+      for(let y=m+top+cm(.8);y<h-m;y+=cm(.8)){ctx.strokeStyle=ink;ctx.beginPath();ctx.moveTo(m,y);ctx.lineTo(w-m,y);ctx.stroke();}
+    }
+    if(template==='daily'){
+      const top=3.3*PX_PER_CM;
+      ctx.strokeStyle=strong;ctx.lineWidth=1.4;
+      ctx.beginPath();ctx.moveTo(m,top);ctx.lineTo(w-m,top);ctx.stroke();
+      ctx.fillStyle=strong;ctx.font='600 14px Inter,sans-serif';
+      ctx.fillText('Datum:',m, m+5); ctx.fillText('Prioritäten',m,m+top+8);
+      for(let i=1;i<=3;i++){ctx.beginPath();ctx.arc(m+7,m+top+28+i*cm(.8),5,0,Math.PI*2);ctx.stroke();}
+      for(let y=top+cm(.85);y<h-m;y+=cm(.85)){ctx.strokeStyle=ink;ctx.beginPath();ctx.moveTo(m+20,y);ctx.lineTo(w-m,y);ctx.stroke();}
+      ctx.strokeStyle=strong;ctx.beginPath();ctx.moveTo(w*0.64,top);ctx.lineTo(w*0.64,h-m);ctx.stroke();
+      ctx.fillText('Notizen',w*0.64+10,m+top+10);
+    }
+    if(template==='timetable'){
+      const left=2.3*PX_PER_CM, top=2.4*PX_PER_CM, cols=5, rows=8, cw=(w-left-m)/cols, rh=(h-top-m)/rows;
+      ctx.strokeStyle=strong;ctx.lineWidth=1.2;
+      for(let i=0;i<=cols;i++){let x=left+i*cw;ctx.beginPath();ctx.moveTo(x,top);ctx.lineTo(x,h-m);ctx.stroke();}
+      for(let i=0;i<=rows;i++){let y=top+i*rh;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(w-m,y);ctx.stroke();}
+      ctx.fillStyle=strong;ctx.font='600 11px Inter,sans-serif';
+      ['Mo','Di','Mi','Do','Fr'].forEach((d,i)=>ctx.fillText(d,left+i*cw+7,top+8));
+      for(let i=0;i<rows;i++)ctx.fillText(String(1+i),m,top+i*rh+8);
+    }
+    if(template==='checklist'){
+      const titleY=m+18, line=1.0*PX_PER_CM;
+      ctx.fillStyle=strong;ctx.font='700 15px Inter,sans-serif';ctx.fillText('CHECKLIST',m,titleY);
+      for(let y=titleY+cm(.9);y<h-m;y+=line){
+        ctx.strokeStyle=strong;ctx.strokeRect(m,y-8,12,12);
+        ctx.strokeStyle=ink;ctx.beginPath();ctx.moveTo(m+24,y+1);ctx.lineTo(w-m,y+1);ctx.stroke();
+      }
+    }
+    if(template==='meeting'){
+      const head=3*PX_PER_CM;
+      ctx.fillStyle=strong;ctx.font='600 13px Inter,sans-serif';
+      ['Meeting:', 'Datum:', 'Teilnehmer:'].forEach((t,i)=>ctx.fillText(t,m+i*(w-2*m)/3,m+10));
+      ctx.strokeStyle=strong;ctx.beginPath();ctx.moveTo(m,head);ctx.lineTo(w-m,head);ctx.stroke();
+      ['Agenda','Notizen','Entscheidungen','Nächste Schritte'].forEach((t,i)=>{
+        const y=head+cm(.9)+i*(cm(3.7));
+        ctx.fillStyle=strong;ctx.font='600 13px Inter,sans-serif';ctx.fillText(t,m,y);
+        ctx.strokeStyle=ink;
+        for(let k=1;k<=3;k++){ctx.beginPath();ctx.moveTo(m,y+k*cm(.8));ctx.lineTo(w-m,y+k*cm(.8));ctx.stroke();}
+      });
+    }
+    if(template==='journal'){
+      ctx.fillStyle=strong;ctx.font='600 16px Inter,sans-serif';ctx.fillText('TODAY',m,m+18);
+      ctx.fillStyle=ink;ctx.font='12px Inter,sans-serif';ctx.fillText('Mood / Gedanken / Highlights',m,m+36);
+      for(let y=m+cm(2);y<h-m;y+=cm(.9)){ctx.beginPath();ctx.moveTo(m,y);ctx.lineTo(w-m,y);ctx.stroke();}
+      ctx.strokeStyle=strong;ctx.beginPath();ctx.arc(w-m-30,m+30,18,0,Math.PI*2);ctx.stroke();
+    }
+    if(template==='habit'){
+      const top=3*PX_PER_CM, cols=8, rows=10, left=4.3*PX_PER_CM, cw=(w-left-m)/cols, rh=(h-top-m)/rows;
+      ctx.fillStyle=strong;ctx.font='700 14px Inter,sans-serif';ctx.fillText('HABIT TRACKER',m,m+17);
+      ctx.strokeStyle=strong;ctx.lineWidth=1.1;
+      for(let i=0;i<=cols;i++){let x=left+i*cw;ctx.beginPath();ctx.moveTo(x,top);ctx.lineTo(x,h-m);ctx.stroke();}
+      for(let i=0;i<=rows;i++){let y=top+i*rh;ctx.beginPath();ctx.moveTo(m,y);ctx.lineTo(w-m,y);ctx.stroke();}
+      ctx.fillStyle=ink;ctx.font='9px Inter,sans-serif';['M','D','M','D','F','S','S'].forEach((d,i)=>ctx.fillText(d,left+i*cw+8,top-7));
+    }
+    if(template==='music'){
+      const step=1.0*PX_PER_CM;
+      for(let y=m+step;y<h-m;y+=step){
+        ctx.strokeStyle=strong;ctx.beginPath();ctx.moveTo(m,y);ctx.lineTo(w-m,y);ctx.stroke();
+      }
+      ctx.strokeStyle=ink;
+      for(let y=m+step;y<h-m;y+=cm(4.2)){
+        ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(m,y);ctx.lineTo(w-m,y);ctx.stroke();
+      }
+    }
+    ctx.restore();
+  };
+
+  tplPreviewSvg = function(tpl, color){
+    if(!['dot-grid','cornell','math','weekly','daily','timetable','checklist','meeting','journal','habit','music'].includes(tpl))
+      return ORIGINAL_TPL_PREVIEW(tpl,color);
+    const base=`<rect width="60" height="80" fill="${color}"/>`;
+    const stroke='#b9b19d';
+    const txt='#64604f';
+    if(tpl==='dot-grid') return `<svg viewBox="0 0 60 80" style="width:100%;height:100%">${base}${Array.from({length:11}).map((_,i)=>Array.from({length:15}).map((_,j)=>`<circle cx="${5+i*5}" cy="${5+j*5}" r=".7" fill="${stroke}"/>`).join('')).join('')}</svg>`;
+    if(tpl==='cornell') return `<svg viewBox="0 0 60 80" style="width:100%;height:100%">${base}<line x1="18" y1="4" x2="18" y2="70" stroke="${stroke}"/><line x1="5" y1="70" x2="55" y2="70" stroke="${stroke}"/><text x="6" y="12" font-size="4" fill="${txt}">Cues</text><text x="22" y="12" font-size="4" fill="${txt}">Notes</text></svg>`;
+    if(tpl==='math') return `<svg viewBox="0 0 60 80" style="width:100%;height:100%">${base}${Array.from({length:12}).map((_,i)=>`<line x1="${5+i*5}" y1="4" x2="${5+i*5}" y2="76" stroke="${stroke}" stroke-width=".45"/>`).join('')}${Array.from({length:16}).map((_,i)=>`<line x1="5" y1="${4+i*5}" x2="55" y2="${4+i*5}" stroke="${stroke}" stroke-width=".45"/>`).join('')}</svg>`;
+    if(tpl==='weekly') return `<svg viewBox="0 0 60 80" style="width:100%;height:100%">${base}${Array.from({length:8}).map((_,i)=>`<line x1="${5+i*7.1}" y1="12" x2="${5+i*7.1}" y2="76" stroke="${stroke}"/>`).join('')}<line x1="5" y1="12" x2="55" y2="12" stroke="${stroke}"/></svg>`;
+    if(tpl==='daily') return `<svg viewBox="0 0 60 80" style="width:100%;height:100%">${base}<line x1="38" y1="12" x2="38" y2="76" stroke="${stroke}"/><line x1="5" y1="16" x2="55" y2="16" stroke="${stroke}"/><line x1="8" y1="22" x2="34" y2="22" stroke="${stroke}"/><line x1="8" y1="30" x2="34" y2="30" stroke="${stroke}"/><line x1="8" y1="38" x2="34" y2="38" stroke="${stroke}"/></svg>`;
+    if(tpl==='timetable') return `<svg viewBox="0 0 60 80" style="width:100%;height:100%">${base}${Array.from({length:6}).map((_,i)=>`<line x1="${12+i*8}" y1="10" x2="${12+i*8}" y2="75" stroke="${stroke}"/>`).join('')}${Array.from({length:9}).map((_,i)=>`<line x1="12" y1="${10+i*8}" x2="54" y2="${10+i*8}" stroke="${stroke}"/>`).join('')}</svg>`;
+    if(tpl==='checklist') return `<svg viewBox="0 0 60 80" style="width:100%;height:100%">${base}<text x="5" y="12" font-size="5" fill="${txt}">CHECKLIST</text>${[22,32,42,52,62,72].map(y=>`<rect x="5" y="${y-4}" width="3.5" height="3.5" fill="none" stroke="${stroke}"/><line x1="12" y1="${y-1}" x2="55" y2="${y-1}" stroke="${stroke}"/>`).join('')}</svg>`;
+    if(tpl==='meeting') return `<svg viewBox="0 0 60 80" style="width:100%;height:100%">${base}<line x1="5" y1="18" x2="55" y2="18" stroke="${stroke}"/>${[28,42,56,70].map(y=>`<line x1="5" y1="${y}" x2="55" y2="${y}" stroke="${stroke}"/>`).join('')}<text x="5" y="12" font-size="4" fill="${txt}">MEETING NOTES</text></svg>`;
+    if(tpl==='journal') return `<svg viewBox="0 0 60 80" style="width:100%;height:100%">${base}<text x="5" y="13" font-size="5" fill="${txt}">TODAY</text>${[24,34,44,54,64,74].map(y=>`<line x1="5" y1="${y}" x2="55" y2="${y}" stroke="${stroke}"/>`).join('')}</svg>`;
+    if(tpl==='habit') return `<svg viewBox="0 0 60 80" style="width:100%;height:100%">${base}<text x="5" y="10" font-size="4.5" fill="${txt}">HABIT TRACKER</text>${Array.from({length:7}).map((_,i)=>`<line x1="${10+i*6}" y1="15" x2="${10+i*6}" y2="75" stroke="${stroke}"/>`).join('')}${Array.from({length:7}).map((_,i)=>`<line x1="10" y1="${15+i*9}" x2="52" y2="${15+i*9}" stroke="${stroke}"/>`).join('')}</svg>`;
+    return `<svg viewBox="0 0 60 80" style="width:100%;height:100%">${base}${[24,29,34,39,58,63,68,73].map(y=>`<line x1="5" y1="${y}" x2="55" y2="${y}" stroke="${stroke}"/>`).join('')}</svg>`;
+  };
+
+  /* ---------- Themes ---------- */
+  const THEMES = [
+    {id:'classic',label:'Classic',bg:'#f7f5ef',surface:'#fffdf8',paper:'#f0ece1',ink:'#16233D',accent:'#D98E2B'},
+    {id:'midnight',label:'Midnight',bg:'#0f1420',surface:'#171e2d',paper:'#232c40',ink:'#f1f4fa',accent:'#8fb7ff'},
+    {id:'forest',label:'Forest',bg:'#eef4ee',surface:'#f8fcf8',paper:'#dfeadf',ink:'#203a2a',accent:'#5b9b73'},
+    {id:'ocean',label:'Ocean',bg:'#eef6f8',surface:'#fbffff',paper:'#dcecef',ink:'#19344b',accent:'#438fa8'},
+    {id:'lavender',label:'Lavender',bg:'#f5f1fb',surface:'#fffaff',paper:'#eae2f4',ink:'#34284d',accent:'#9272c5'},
+    {id:'rose',label:'Rose',bg:'#fbf1f4',surface:'#fffafb',paper:'#f3dfe5',ink:'#4d2833',accent:'#bf7187'},
+    {id:'mono',label:'Monochrome',bg:'#ededed',surface:'#fafafa',paper:'#dedede',ink:'#202020',accent:'#666666'}
+  ];
+  function applyTheme(id, persist=true){
+    const t=THEMES.find(x=>x.id===id)||THEMES[0];
+    let style=document.getElementById('ultimate-theme-style');
+    if(!style){ style=document.createElement('style'); style.id='ultimate-theme-style'; document.head.appendChild(style); }
+    style.textContent=`body{--bg-app:${t.bg};--bg-surface:${t.surface};--paper-200:${t.paper};--ink-800:${t.ink};--amber-500:${t.accent};--amber-600:${t.accent};--text-main:${t.ink};}`;
+    document.body.dataset.ultimateTheme=id;
+    if(persist) localStorage.setItem(U.themeKey,id);
+  }
+
+  /* ---------- Tags ---------- */
+  function nodeTags(node){ return Array.isArray(node.tags)?node.tags:[]; }
+  function saveTags(node, raw){
+    node.tags = raw.split(',').map(s=>s.trim()).filter(Boolean).slice(0,12);
+    queueSave(); renderSidebarTree(); renderLibrary();
+    toast('Tags gespeichert');
+  }
+  function openTagEditor(node){
+    openModal(`<h3>Tags bearbeiten</h3>
+      <p style="font-size:12px;color:var(--text-muted)">Mehrere Tags mit Komma trennen.</p>
+      <input id="tag-input" value="${escapeHtml(nodeTags(node).join(', '))}" placeholder="z. B. Mathe, Prüfung, Wichtig">
+      <div class="modal-actions"><button class="btn btn-ghost" id="tag-cancel">Abbrechen</button><button class="btn btn-primary" id="tag-ok">Speichern</button></div>`);
+    const inp=document.getElementById('tag-input'); inp.focus(); inp.select();
+    document.getElementById('tag-cancel').onclick=closeModal;
+    document.getElementById('tag-ok').onclick=()=>{saveTags(node,inp.value);closeModal();};
+  }
+
+  /* Extend notebook context menu */
+  const _openNodeContextMenu = openNodeContextMenu;
+  openNodeContextMenu = function(e,node){
+    const items=[{label:'Umbenennen',action:()=>promptRename(node)}];
+    if(node.type==='notebook'){
+      items.push({label:node.favorite?'Favorit entfernen':'Als Favorit markieren',action:()=>{node.favorite=!node.favorite;queueSave();renderSidebarTree();renderLibrary();}});
+      items.push({label:'Tags bearbeiten',action:()=>openTagEditor(node)});
+      items.push({label:'Duplizieren',action:()=>{duplicateNotebook(node.id);renderSidebarTree();renderLibrary();toast('Notizbuch dupliziert');}});
+      items.push({label:'Als PDF exportieren',action:()=>exportNotebookPDF(node.id)});
+      items.push({label:'Cover & Design',action:()=>openNotebookDesign(node.id)});
+    }
+    items.push('sep');
+    items.push({label:'Löschen',danger:true,action:()=>{
+      if(confirm(`„${node.name}“ wirklich löschen?`)){deleteNodeRecursive(node.id);if(NAV.folderId===node.id)NAV.folderId=node.parentId;if(NAV.notebookId===node.id){NAV.notebookId=null;showView('library');}renderSidebarTree();renderLibrary();}
+    }});
+    openCtxMenu(e.clientX,e.clientY,items);
+  };
+
+  function openNotebookDesign(id){
+    const n=STATE.nodes[id];
+    const colors=COVER_COLORS.map(c=>`<button class="tool-btn" data-cover="${c}" style="width:32px;height:32px;background:${c};border:2px solid ${n.cover===c?'var(--amber-500)':'transparent'}"></button>`).join('');
+    openModal(`<h3>Notizbuch-Design</h3>
+      <label>Farbe</label><div class="row" style="flex-wrap:wrap">${colors}</div>
+      <div class="feature-row"><div><label>Favorit</label><small>In der Bibliothek nach oben sortieren.</small></div><div id="nbfav" class="toggle ${n.favorite?'on':''}"></div></div>
+      <div class="modal-actions"><button class="btn btn-primary" id="nbdesign-ok">Fertig</button></div>`);
+    document.querySelectorAll('[data-cover]').forEach(b=>b.onclick=()=>{n.cover=b.dataset.cover;queueSave();document.querySelectorAll('[data-cover]').forEach(x=>x.style.borderColor=x.dataset.cover===n.cover?'var(--amber-500)':'transparent');renderLibrary();});
+    document.getElementById('nbfav').onclick=()=>{n.favorite=!n.favorite;document.getElementById('nbfav').classList.toggle('on',n.favorite);queueSave();renderLibrary();};
+    document.getElementById('nbdesign-ok').onclick=closeModal;
+  }
+
+  /* ---------- New template gallery ---------- */
+  function openTemplateGallery(){
+    const cards=TEMPLATES.map(t=>`
+      <div class="ultimate-card template-card" data-tpl="${t.id}">
+        <div style="height:105px;border:1px solid var(--border-soft);border-radius:9px;overflow:hidden;margin-bottom:8px">${tplPreviewSvg(t.id,'#FFFFFF')}</div>
+        <strong>${escapeHtml(t.label)}</strong><small>${t.id}</small>
+      </div>`).join('');
+    openModal(`<div class="ultimate-modal"><h3>Templates</h3>
+      <p style="font-size:12px;color:var(--text-muted)">Vorlage auf die aktuelle Seite anwenden oder als neue Seite anlegen.</p>
+      <div class="ultimate-grid">${cards}</div>
+      <div class="modal-actions"><button class="btn btn-ghost" id="tpl-close">Schließen</button></div></div>`);
+    document.querySelectorAll('[data-tpl]').forEach(card=>card.onclick=()=>{
+      const id=card.dataset.tpl;
+      if(NAV.view==='editor' && STATE.pages[EDITOR.pageId]){
+        applyPageChanges({template:id,background:null});
+        closeModal(); toast('Template angewendet');
+      } else if(NAV.notebookId){
+        addPage(NAV.notebookId,{template:id,paperColor:'#FFFFFF'});
+        closeModal(); renderNotebookView(); toast('Template-Seite erstellt');
+      }
+    });
+    document.getElementById('tpl-close').onclick=closeModal;
+  }
+
+  /* ---------- Quick action helpers ---------- */
+  function getAllText(){
+    const texts=[];
+    Object.values(STATE.pages||{}).forEach(p=>(p.elements||[]).forEach(e=>{if(e.type==='text'&&e.content)texts.push(e.content);}));
+    return texts.join('\n');
+  }
+  function countStats(){
+    const nodes=Object.values(STATE.nodes||{});
+    const pages=Object.values(STATE.pages||{});
+    const strokes=pages.reduce((s,p)=>s+(p.elements||[]).filter(e=>e.type==='stroke').length,0);
+    const text=pages.reduce((s,p)=>s+(p.elements||[]).filter(e=>e.type==='text').length,0);
+    return {notebooks:nodes.filter(n=>n.type==='notebook').length,pages:pages.length,strokes,text};
+  }
+
+  /* ---------- Study tools ---------- */
+  function openStudyHub(){
+    const s=countStats();
+    openModal(`<div class="ultimate-modal"><h3>🧠 Lernstudio</h3>
+      <div class="stat-grid">
+        <div class="stat"><b>${s.notebooks}</b><span>Notizbücher</span></div>
+        <div class="stat"><b>${s.pages}</b><span>Seiten</span></div>
+        <div class="stat"><b>${s.text}</b><span>Textobjekte</span></div>
+        <div class="stat"><b>${s.strokes}</b><span>Zeichnungen</span></div>
+      </div>
+      <div class="ultimate-grid">
+        <div class="ultimate-card" id="study-pomo"><strong>⏱ Pomodoro</strong><small>Fokus- und Pausen-Timer</small></div>
+        <div class="ultimate-card" id="study-flash"><strong>🃏 Karteikarten</strong><small>Fragen/Antworten aus markiertem Text</small></div>
+        <div class="ultimate-card" id="study-summary"><strong>📚 Zusammenfassung</strong><small>Text aus Notizen sammeln und strukturieren</small></div>
+        <div class="ultimate-card" id="study-vocab"><strong>🔤 Vokabelmodus</strong><small>Einfaches Frage-Antwort-Training</small></div>
+      </div>
+      <div class="modal-actions"><button class="btn btn-ghost" id="study-close">Schließen</button></div>
+    </div>`);
+    document.getElementById('study-close').onclick=closeModal;
+    document.getElementById('study-pomo').onclick=()=>openPomodoro();
+    document.getElementById('study-flash').onclick=()=>openFlashcardsFromNotes();
+    document.getElementById('study-summary').onclick=()=>openSummary();
+    document.getElementById('study-vocab').onclick=()=>openVocab();
+  }
+
+  function openPomodoro(){
+    openModal(`<div class="ultimate-modal"><h3>⏱ Pomodoro</h3>
+      <div class="study-timer" id="pomo-time">25:00</div>
+      <div class="study-actions">
+        <button class="btn btn-primary" id="pomo-start">Start</button>
+        <button class="btn btn-ghost" id="pomo-reset">Reset</button>
+        <button class="btn btn-ghost" id="pomo-15">15 min</button>
+        <button class="btn btn-ghost" id="pomo-25">25 min</button>
+        <button class="btn btn-ghost" id="pomo-50">50 min</button>
+      </div>
+      <p id="pomo-label" style="text-align:center;color:var(--text-muted);font-size:12px;margin:10px 0 0">Fokus</p>
+      <div class="modal-actions"><button class="btn btn-ghost" id="pomo-close">Schließen</button></div></div>`);
+    const display=document.getElementById('pomo-time'), label=document.getElementById('pomo-label'), start=document.getElementById('pomo-start');
+    function draw(){
+      const m=Math.floor(U.timer.seconds/60), sec=U.timer.seconds%60;
+      display.textContent=String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');
+      label.textContent=U.timer.mode;
+      start.textContent=U.timer.running?'Pause':'Start';
+    }
+    function stop(){U.timer.running=false;clearInterval(U.timer.interval);U.timer.interval=null;draw();}
+    function setMin(n){stop();U.timer.seconds=n*60;U.timer.total=n*60;U.timer.mode='Fokus';draw();}
+    start.onclick=()=>{
+      if(U.timer.running){stop();return;}
+      U.timer.running=true;draw();
+      U.timer.interval=setInterval(()=>{
+        U.timer.seconds--;
+        if(U.timer.seconds<=0){
+          stop(); U.timer.mode='Pause'; U.timer.seconds=5*60; U.timer.total=5*60;
+          toast('Pomodoro fertig – 5 Minuten Pause');
+          try{new AudioContext().close()}catch{}
+        }
+        draw();
+      },1000);
+    };
+    document.getElementById('pomo-reset').onclick=()=>setMin(25);
+    document.getElementById('pomo-15').onclick=()=>setMin(15);
+    document.getElementById('pomo-25').onclick=()=>setMin(25);
+    document.getElementById('pomo-50').onclick=()=>setMin(50);
+    document.getElementById('pomo-close').onclick=()=>{stop();closeModal();};
+    setMin(25);
+  }
+
+  function buildCards(text){
+    const lines=String(text||'').split(/\n+/).map(x=>x.trim()).filter(x=>x.length>8);
+    const cards=[];
+    lines.forEach(line=>{
+      const parts=line.split(/[:–—=]\s*/);
+      if(parts.length>=2){
+        cards.push({q:parts[0],a:parts.slice(1).join(': ')});
+      }else if(line.includes('?')){
+        cards.push({q:line,a:'Antwort aus deinen Notizen ergänzen.'});
+      }
+    });
+    return cards.slice(0,60);
+  }
+
+  function openFlashcardsFromNotes(){
+    const current=STATE.pages[EDITOR.pageId];
+    let text=(current?.elements||[]).filter(e=>e.type==='text').map(e=>e.content).join('\n');
+    if(!text) text=getAllText();
+    U.flash.cards=buildCards(text);
+    U.flash.index=0;U.flash.show=false;
+    if(!U.flash.cards.length){
+      openModal(`<div class="ultimate-modal"><h3>🃏 Karteikarten</h3><p style="color:var(--text-muted);font-size:13px">Ich brauche Text im Format „Begriff: Erklärung“ oder Zeilen mit Fragen.</p><div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal()">Schließen</button></div></div>`);
+      return;
+    }
+    renderFlashcard();
+  }
+  function renderFlashcard(){
+    const c=U.flash.cards[U.flash.index];
+    openModal(`<div class="ultimate-modal"><h3>🃏 Karteikarten</h3>
+      <div class="flashcard" id="flashcard">
+        <div class="fc-label">${U.flash.index+1} / ${U.flash.cards.length}</div>
+        <div class="fc-main">${escapeHtml(U.flash.show?c.a:c.q)}</div>
+        <div class="fc-answer">${U.flash.show?'Antwort':'Klicken zum Umdrehen'}</div>
+      </div>
+      <div class="study-actions" style="margin-top:10px">
+        <button class="btn btn-ghost" id="fc-prev">← Zurück</button>
+        <button class="btn btn-primary" id="fc-next">Weiter →</button>
+      </div>
+      <div class="modal-actions"><button class="btn btn-ghost" id="fc-close">Schließen</button></div></div>`);
+    document.getElementById('flashcard').onclick=()=>{U.flash.show=!U.flash.show;renderFlashcard();};
+    document.getElementById('fc-next').onclick=()=>{U.flash.index=(U.flash.index+1)%U.flash.cards.length;U.flash.show=false;renderFlashcard();};
+    document.getElementById('fc-prev').onclick=()=>{U.flash.index=(U.flash.index-1+U.flash.cards.length)%U.flash.cards.length;U.flash.show=false;renderFlashcard();};
+    document.getElementById('fc-close').onclick=closeModal;
+  }
+
+  function openSummary(){
+    const text=getAllText().trim();
+    if(!text){openModal(`<h3>📚 Zusammenfassung</h3><p style="color:var(--text-muted)">Noch kein Text in deinen Notizen gefunden.</p><div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal()">Schließen</button></div>`);return;}
+    const parts=text.split(/\n+/).map(x=>x.trim()).filter(Boolean);
+    const top=parts.slice(0,12);
+    openModal(`<div class="ultimate-modal"><h3>📚 Notiz-Zusammenfassung</h3>
+      <div style="background:var(--paper-200);border-radius:12px;padding:14px;max-height:420px;overflow:auto">
+        <ul style="margin:0;padding-left:20px">${top.map(x=>`<li style="margin:0 0 8px;line-height:1.45">${escapeHtml(x)}</li>`).join('')}</ul>
+      </div>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:8px">Das ist eine lokale Strukturierung deiner Notizen, keine externe KI-Auswertung.</p>
+      <div class="modal-actions"><button class="btn btn-ghost" id="sum-close">Schließen</button></div></div>`);
+    document.getElementById('sum-close').onclick=closeModal;
+  }
+
+  function openVocab(){
+    openModal(`<div class="ultimate-modal"><h3>🔤 Vokabelmodus</h3>
+      <label>Vokabeln (eine pro Zeile, „Deutsch = Englisch“ möglich)</label>
+      <textarea id="vocab-input" style="width:100%;min-height:180px;resize:vertical" placeholder="Haus = house&#10;Wasser = water&#10;Schule = school"></textarea>
+      <div class="modal-actions"><button class="btn btn-ghost" id="vocab-cancel">Abbrechen</button><button class="btn btn-primary" id="vocab-start">Training starten</button></div></div>`);
+    document.getElementById('vocab-cancel').onclick=closeModal;
+    document.getElementById('vocab-start').onclick=()=>{
+      const raw=document.getElementById('vocab-input').value;
+      const cards=raw.split(/\n+/).map(l=>l.trim()).filter(Boolean).map(l=>{
+        const p=l.split(/\s*(?:=|:|→)\s*/); return {q:p[0],a:p.slice(1).join(' — ')||'Keine Antwort eingetragen'};
+      });
+      U.flash.cards=cards;U.flash.index=0;U.flash.show=false;
+      renderFlashcard();
+    };
+  }
+
+  /* ---------- Templates + dashboard ---------- */
+  function openUltimateHub(){
+    const s=countStats();
+    openModal(`<div class="ultimate-modal">
+      <h3>✨ Notarium Extras</h3>
+      <div class="ultimate-tabs">
+        <button class="ultimate-tab active" data-pane="themes">🎨 Designs</button>
+        <button class="ultimate-tab" data-pane="templates">📄 Templates</button>
+        <button class="ultimate-tab" data-pane="study">🧠 Lernen</button>
+        <button class="ultimate-tab" data-pane="tools">🛠 Tools</button>
+        <button class="ultimate-tab" data-pane="data">💾 Daten</button>
+      </div>
+
+      <div class="ultimate-pane active" id="pane-themes">
+        <div class="ultimate-grid">${THEMES.map(t=>`
+          <div class="ultimate-card" data-theme="${t.id}">
+            <div class="theme-preview">
+              <div class="a" style="background:${t.ink}"></div><div class="b" style="background:${t.surface}"></div><div class="c" style="background:${t.accent}"></div>
+            </div>
+            <strong>${t.label}</strong><small>Farben & Oberfläche</small>
+          </div>`).join('')}</div>
+        <div class="feature-row"><div><label>Automatisches Speichern</label><small>Notizen bleiben lokal auf diesem Gerät gespeichert.</small></div><div class="toggle on"></div></div>
+      </div>
+
+      <div class="ultimate-pane" id="pane-templates">
+        <div class="ultimate-grid">${TEMPLATES.slice(-11).map(t=>`
+          <div class="ultimate-card" data-template="${t.id}">
+            <strong>${escapeHtml(t.label)}</strong><small>Als aktuelle Seite verwenden</small>
+          </div>`).join('')}</div>
+        <div class="modal-actions"><button class="btn btn-primary" id="open-template-gallery">Komplette Template-Galerie</button></div>
+      </div>
+
+      <div class="ultimate-pane" id="pane-study">
+        <div class="stat-grid">
+          <div class="stat"><b>${s.notebooks}</b><span>Notizbücher</span></div>
+          <div class="stat"><b>${s.pages}</b><span>Seiten</span></div>
+          <div class="stat"><b>${s.text}</b><span>Texte</span></div>
+          <div class="stat"><b>${s.strokes}</b><span>Strokes</span></div>
+        </div>
+        <div class="ultimate-grid">
+          <div class="ultimate-card" id="hub-pomo"><strong>⏱ Pomodoro</strong><small>Fokuszeit starten</small></div>
+          <div class="ultimate-card" id="hub-flash"><strong>🃏 Karteikarten</strong><small>Aus Notizen lernen</small></div>
+          <div class="ultimate-card" id="hub-summary"><strong>📚 Zusammenfassung</strong><small>Notizen strukturieren</small></div>
+          <div class="ultimate-card" id="hub-vocab"><strong>🔤 Vokabeltrainer</strong><small>Eigene Karten eingeben</small></div>
+        </div>
+      </div>
+
+      <div class="ultimate-pane" id="pane-tools">
+        <div class="ultimate-grid">
+          <div class="ultimate-card" id="tool-new-page"><strong>➕ Seite</strong><small>Neue Seite mit Template</small></div>
+          <div class="ultimate-card" id="tool-new-notebook"><strong>📘 Notizbuch</strong><small>Neues Notizbuch erstellen</small></div>
+          <div class="ultimate-card" id="tool-backup"><strong>💾 Backup</strong><small>Kompletten Datenbestand sichern</small></div>
+          <div class="ultimate-card" id="tool-shortcuts"><strong>⌨️ Shortcuts</strong><small>Tastenkürzel anzeigen</small></div>
+          <div class="ultimate-card" id="tool-stats"><strong>📊 Statistik</strong><small>Umfang deiner Bibliothek</small></div>
+          <div class="ultimate-card" id="tool-search"><strong>🔎 Suche</strong><small>Zur Bibliothekssuche</small></div>
+        </div>
+      </div>
+
+      <div class="ultimate-pane" id="pane-data">
+        <div class="feature-row"><div><label>Backup exportieren</label><small>JSON-Datei für einen kompletten Gerätesicherungstand.</small></div><button class="btn btn-ghost" id="data-export">Export</button></div>
+        <div class="feature-row"><div><label>PNG der aktuellen Seite</label><small>Hohe Auflösung als Bild exportieren.</small></div><button class="btn btn-ghost" id="data-png">PNG</button></div>
+        <div class="feature-row"><div><label>PDF der aktuellen Seite</label><small>PDF-Export aus dem bestehenden Notarium-Renderer.</small></div><button class="btn btn-ghost" id="data-pdf">PDF</button></div>
+        <div class="feature-row"><div><label>Lokale Speicherung</label><small>IndexedDB + Autosave sind bereits aktiv.</small></div><span style="color:var(--amber-600);font-weight:700">Aktiv</span></div>
+      </div>
+
+      <div class="modal-actions"><button class="btn btn-ghost" id="ultimate-close">Schließen</button></div>
+    </div>`);
+
+    document.querySelectorAll('.ultimate-tab').forEach(tab=>tab.onclick=()=>{
+      document.querySelectorAll('.ultimate-tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.ultimate-pane').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active'); document.getElementById('pane-'+tab.dataset.pane).classList.add('active');
+    });
+    document.querySelectorAll('[data-theme]').forEach(c=>c.onclick=()=>{applyTheme(c.dataset.theme);toast('Design geändert');});
+    document.querySelectorAll('[data-template]').forEach(c=>c.onclick=()=>{
+      if(NAV.view==='editor'&&STATE.pages[EDITOR.pageId]){applyPageChanges({template:c.dataset.template,background:null});toast('Template angewendet');}
+      else toast('Öffne zuerst eine Seite');
+    });
+    document.getElementById('open-template-gallery').onclick=openTemplateGallery;
+    document.getElementById('hub-pomo').onclick=openPomodoro;
+    document.getElementById('hub-flash').onclick=openFlashcardsFromNotes;
+    document.getElementById('hub-summary').onclick=openSummary;
+    document.getElementById('hub-vocab').onclick=openVocab;
+    document.getElementById('tool-new-page').onclick=()=>{if(NAV.notebookId){closeModal();openNewPageModal(NAV.notebookId);}};
+    document.getElementById('tool-new-notebook').onclick=()=>{closeModal();openNewNotebookModal();};
+    document.getElementById('tool-backup').onclick=()=>{closeModal();exportBackup();};
+    document.getElementById('tool-shortcuts').onclick=()=>{closeModal();openShortcutsModal();};
+    document.getElementById('tool-stats').onclick=()=>{
+      toast(`${s.notebooks} Notizbücher · ${s.pages} Seiten · ${s.text} Texte · ${s.strokes} Zeichnungen`);
+    };
+    document.getElementById('tool-search').onclick=()=>{closeModal();document.getElementById('search-input')?.focus();};
+    document.getElementById('data-export').onclick=exportBackup;
+    document.getElementById('data-png').onclick=()=>{if(NAV.view==='editor')exportCurrentPagePNG();else toast('Keine Seite geöffnet');};
+    document.getElementById('data-pdf').onclick=()=>{if(NAV.view==='editor'&&STATE.pages[EDITOR.pageId])exportSinglePagePDF(STATE.pages[EDITOR.pageId]);else toast('Keine Seite geöffnet');};
+    document.getElementById('ultimate-close').onclick=closeModal;
+  }
+
+  /* ---------- Template support in page settings ---------- */
+  function makeNewPageFromTemplate(templateId){
+    if(!NAV.notebookId) return;
+    const pid=addPage(NAV.notebookId,{template:templateId,paperColor:'#FFFFFF'},NAV.view==='editor'?STATE.nodes[NAV.notebookId].pageOrder.indexOf(EDITOR.pageId):undefined);
+    if(NAV.view==='editor') openPage(pid);
+    else renderNotebookView();
+  }
+
+  /* ---------- Patch search: include tags ---------- */
+  const originalRenderLibrary = renderLibrary;
+  renderLibrary = function(){
+    const q=(document.getElementById('search-input')?.value||'').trim().toLowerCase();
+    if(q){
+      const grid=document.getElementById('library-grid');
+      const matches=Object.values(STATE.nodes||{}).filter(n=>{
+        if((n.name||'').toLowerCase().includes(q)) return true;
+        if(nodeTags(n).some(t=>t.toLowerCase().includes(q))) return true;
+        if(n.type==='notebook') return n.pageOrder.some(pid=>(STATE.pages[pid]?.elements||[]).some(el=>el.type==='text' && String(el.content||'').toLowerCase().includes(q)));
+        return false;
+      });
+      const old=document.getElementById('search-input').value;
+      document.getElementById('search-input').value='';
+      originalRenderLibrary();
+      document.getElementById('search-input').value=old;
+      if(matches.length){
+        grid.innerHTML='';
+        matches.forEach(node=>{
+          // Reuse minimal rendering by jumping to parent then leaving the main renderer intact.
+          const card=document.createElement('div');card.className='card'+(node.favorite?' favorite':'');card.dataset.id=node.id;
+          const thumb=node.type==='folder'?`<div class="card-thumb folder-thumb">${ICO.folder}</div>`:`<div class="card-thumb" style="background:${node.cover||'#16233D'}"><div style="font-size:18px;color:#fff;font-weight:800;padding:14px">${escapeHtml(node.name.slice(0,20))}</div></div>`;
+          card.innerHTML=thumb+`<div class="card-name">${escapeHtml(node.name)}</div><div class="card-meta">${node.type==='folder'?'Ordner':'Notizbuch'}${nodeTags(node).length?' · '+escapeHtml(nodeTags(node).join(' · ')):''}</div>`;
+          card.onclick=()=>node.type==='folder'?openFolder(node.id):openNotebook(node.id);
+          grid.appendChild(card);
+        });
+      }
+      return;
+    }
+    originalRenderLibrary();
+  };
+
+  /* ---------- Theme persistence ---------- */
+  function loadTheme(){
+    const saved=localStorage.getItem(U.themeKey);
+    if(saved) applyTheme(saved,false);
+  }
+
+  /* ---------- Hook extras button ---------- */
+  function hook(){
+    loadTheme();
+    const b=document.getElementById('btn-extras');
+    if(b) b.onclick=openUltimateHub;
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',hook);
+  else hook();
+})();
+</script>
+
+
+<script id="notarium-modern-hud-js">
+(() => {
+  /* ---------- Small quality-of-life helpers ---------- */
+  function safeCall(fnName,...args){
+    try{ if(typeof window[fnName]==='function') return window[fnName](...args); }catch(e){}
+  }
+
+  /* Command palette */
+  const palette=document.createElement('div');
+  palette.id='notarium-command-palette';
+  palette.innerHTML=`
+    <div class="ncp-window">
+      <div class="ncp-head"><input id="ncp-input" placeholder="Befehl suchen …  z. B. Template, Pomodoro, Export"></div>
+      <div class="ncp-list" id="ncp-list"></div>
+      <div class="ncp-foot">↑ ↓ auswählen · Enter öffnen · Esc schließen · Ctrl/⌘ K</div>
+    </div>`;
+  document.body.appendChild(palette);
+
+  const commands=[
+    ['✨','Extras','Designs, Templates, Lernen und Tools öffnen',()=>safeCall('openUltimateHub')],
+    ['🎨','Designs','Notarium-Theme auswählen',()=>{safeCall('openUltimateHub');}],
+    ['📄','Templates','Template-Galerie öffnen',()=>safeCall('openTemplateGallery')],
+    ['🧠','Lernstudio','Lernfunktionen öffnen',()=>safeCall('openStudyHub')],
+    ['⏱','Pomodoro','Fokus-Timer starten',()=>safeCall('openPomodoro')],
+    ['🃏','Karteikarten','Karteikarten öffnen',()=>safeCall('openFlashcardsFromNotes')],
+    ['🔤','Vokabeltrainer','Vokabeltraining öffnen',()=>safeCall('openVocab')],
+    ['📚','Zusammenfassung','Notizen strukturieren',()=>safeCall('openSummary')],
+    ['💾','Backup','Komplettes Backup exportieren',()=>safeCall('exportBackup')],
+    ['📊','Statistik','Bibliotheksstatistik anzeigen',()=>{const s=typeof countStats==='function'?countStats():null;if(s)toast(`${s.notebooks} Notizbücher · ${s.pages} Seiten · ${s.text} Texte · ${s.strokes} Zeichnungen`);}],
+    ['⌨️','Shortcuts','Tastenkürzel anzeigen',()=>safeCall('openShortcutsModal')],
+    ['✋','Blatt bewegen','Blatt-Modus aktivieren',()=>safeCall('setTool','pan')],
+    ['✏️','Stift','Stift aktivieren',()=>safeCall('setTool','pen')],
+    ['🖍','Textmarker','Textmarker aktivieren',()=>safeCall('setTool','highlighter')],
+    ['⌫','Radierer','Radierer aktivieren',()=>safeCall('setTool','eraser')],
+  ];
+  let sel=0;
+  function renderCommands(q=''){
+    const query=q.trim().toLowerCase();
+    const arr=commands.filter(c=>(c[1]+' '+c[2]).toLowerCase().includes(query));
+    if(sel>=arr.length)sel=0;
+    document.getElementById('ncp-list').innerHTML=arr.map((c,i)=>`
+      <div class="ncp-item ${i===sel?'selected':''}" data-cmd="${i}">
+        <div class="ncp-icon">${c[0]}</div><div><strong>${c[1]}</strong><span>${c[2]}</span></div>
+      </div>`).join('') || `<div style="padding:18px;color:#77808c;font-size:12px">Kein Befehl gefunden.</div>`;
+    document.querySelectorAll('.ncp-item').forEach((el,i)=>el.onclick=()=>{
+      const c=arr[i]; closePalette(); if(c) c[3]();
+    });
+  }
+  function openPalette(){sel=0;palette.classList.add('show');const i=document.getElementById('ncp-input');i.value='';renderCommands();setTimeout(()=>i.focus(),20)}
+  function closePalette(){palette.classList.remove('show')}
+  window.openNotariumCommandPalette=openPalette;
+  document.getElementById('ncp-input').addEventListener('input',e=>{sel=0;renderCommands(e.target.value)});
+  document.getElementById('ncp-input').addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){e.preventDefault();sel++;renderCommands(e.target.value)}
+    if(e.key==='ArrowUp'){e.preventDefault();sel=Math.max(0,sel-1);renderCommands(e.target.value)}
+    if(e.key==='Enter'){
+      const query=e.target.value.trim().toLowerCase();
+      const arr=commands.filter(c=>(c[1]+' '+c[2]).toLowerCase().includes(query));
+      if(arr[sel]){closePalette();arr[sel][3]();}
+    }
+    if(e.key==='Escape')closePalette();
+  });
+  palette.addEventListener('click',e=>{if(e.target===palette)closePalette()});
+  document.addEventListener('keydown',e=>{
+    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openPalette()}
+  });
+
+  /* Bottom floating quick bar */
+  const bottom=document.createElement('div');
+  bottom.id='notarium-bottom-bar';
+  bottom.innerHTML=`
+    <button id="nb-pen" title="Stift">✏️</button>
+    <button id="nb-highlight" title="Textmarker">🖍️</button>
+    <button id="nb-eraser" title="Radierer">⌫</button>
+    <button id="nb-pan" title="Blatt bewegen">✋</button>
+    <span class="hud-sep"></span>
+    <button id="nb-undo" title="Rückgängig">↶</button>
+    <button id="nb-redo" title="Wiederholen">↷</button>
+    <span class="hud-sep"></span>
+    <button id="nb-template" title="Templates">📄</button>
+    <button id="nb-study" title="Lernstudio">🧠</button>
+    <button id="nb-command" title="Befehle (Ctrl+K)">⌘</button>`;
+  document.body.appendChild(bottom);
+  const bind=(id,fn)=>document.getElementById(id).addEventListener('click',fn);
+  bind('nb-pen',()=>safeCall('setTool','pen'));
+  bind('nb-highlight',()=>safeCall('setTool','highlighter'));
+  bind('nb-eraser',()=>safeCall('setTool','eraser'));
+  bind('nb-pan',()=>safeCall('setTool','pan'));
+  bind('nb-undo',()=>document.execCommand('undo'));
+  bind('nb-redo',()=>document.execCommand('redo'));
+  bind('nb-template',()=>safeCall('openTemplateGallery'));
+  bind('nb-study',()=>safeCall('openStudyHub'));
+  bind('nb-command',openPalette);
+
+  /* Replace/augment extras button behavior */
+  const extras=document.getElementById('btn-extras');
+  if(extras){
+    extras.innerHTML='✨';
+    extras.title='Notarium Center · Ctrl+K';
+    extras.onclick=()=>safeCall('openUltimateHub');
+  }
+
+  /* Add an unobtrusive top status area */
+  const bar=document.querySelector('.topbar');
+  if(bar && !document.getElementById('notarium-status')){
+    const s=document.createElement('div');
+    s.id='notarium-status';
+    s.className='np-status';
+    s.innerHTML='<span class="np-dot"></span><span>Autosave</span>';
+    const spacer=bar.querySelector('.topbar-spacer');
+    if(spacer) spacer.before(s);
+    else bar.appendChild(s);
+  }
+
+  /* Escape should always close modal/palette where appropriate */
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape' && palette.classList.contains('show')) closePalette();
+  });
+
+  /* Improve visible tooltips for icon-heavy HUD */
+  document.querySelectorAll('.icon-btn,.tool-btn').forEach(b=>{
+    if(!b.getAttribute('title') && b.getAttribute('aria-label')) b.setAttribute('title',b.getAttribute('aria-label'));
+  });
 })();
 </script>
 
