@@ -3666,6 +3666,839 @@ Finger: Blatt bewegen · Stift: Schreiben
 })();
 </script>
 
+
+<style id="notarium-premium-upgrade">
+/* ==========================================================
+   NOTARIUM PREMIUM 2.1
+   Fokus: bessere Bibliothek, sichere Löschung, Ordnung,
+   Statusanzeige, mobile Bedienung und ein aufgeräumtes Extras-Center
+   ========================================================== */
+
+.library-tools.premium-toolbar{
+  display:flex;align-items:center;gap:7px;flex-wrap:wrap;
+  margin:-7px 0 20px;padding:8px;
+  background:rgba(255,255,255,.52);
+  border:1px solid var(--border-soft);border-radius:14px;
+  backdrop-filter:blur(12px);
+}
+.premium-toolbar .filter-btn{
+  border:1px solid var(--border-soft);background:var(--bg-surface);
+  color:var(--text-main);border-radius:999px;padding:7px 11px;
+  font-size:11.5px;font-weight:600;cursor:pointer;
+  transition:.15s ease;
+}
+.premium-toolbar .filter-btn:hover{transform:translateY(-1px);border-color:var(--amber-500)}
+.premium-toolbar .filter-btn.active{background:var(--ink-800);color:#fff;border-color:var(--ink-800)}
+.premium-toolbar select{
+  height:32px;padding:0 9px;font-size:11.5px;border-radius:999px!important;
+  background:var(--bg-surface)!important;
+}
+.premium-toolbar .premium-spacer{flex:1}
+.premium-toolbar .premium-count{
+  font-size:10.5px;color:var(--text-muted);white-space:nowrap;padding:0 4px;
+}
+
+.card .premium-card-info{
+  min-height:18px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;
+  margin-top:2px;
+}
+.premium-tag{
+  display:inline-flex;align-items:center;max-width:92px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;padding:2px 6px;
+  border-radius:999px;background:var(--paper-200);color:var(--text-muted);font-size:9px;
+}
+.premium-updated{font-size:9.5px;color:var(--text-muted)}
+
+#premium-dashboard{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:-2px 0 18px;
+}
+.premium-stat{
+  border:1px solid var(--border-soft);border-radius:13px;padding:11px 12px;
+  background:rgba(255,255,255,.48);backdrop-filter:blur(8px);
+}
+.premium-stat b{display:block;font-size:19px;line-height:1.1}
+.premium-stat span{display:block;margin-top:3px;font-size:10px;color:var(--text-muted)}
+
+.premium-trash-card .card-thumb{
+  background:linear-gradient(145deg,#687285,#2d3440)!important;color:#fff;
+}
+.premium-trash-actions{margin:-7px 0 18px}
+.premium-trash-empty{
+  grid-column:1/-1;text-align:center;padding:70px 20px;color:var(--text-muted)
+}
+.premium-trash-empty .big{font-size:44px;margin-bottom:8px}
+.premium-restore{
+  position:absolute;right:8px;top:8px;border:0;border-radius:8px;
+  padding:6px 8px;background:rgba(255,255,255,.94);cursor:pointer;
+  font-size:10.5px;font-weight:700;color:#202938;
+}
+.premium-trash-delete{
+  position:absolute;left:8px;top:8px;border:0;border-radius:8px;
+  width:28px;height:28px;background:rgba(255,255,255,.94);cursor:pointer;
+}
+
+.premium-data-box{
+  margin-top:10px;padding:12px;border-radius:12px;background:var(--paper-200);
+  font-size:11px;color:var(--text-muted);line-height:1.5;
+}
+.premium-data-box b{color:var(--text-main)}
+.premium-progress{
+  height:6px;border-radius:99px;background:var(--bg-surface);overflow:hidden;margin-top:8px;
+}
+.premium-progress i{display:block;height:100%;width:0;background:var(--amber-500);border-radius:99px;transition:width .3s}
+
+#premium-quick-create{
+  display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;
+}
+#premium-quick-create button{
+  border:1px solid var(--border-soft);background:var(--bg-surface);
+  color:var(--text-main);border-radius:10px;padding:8px 11px;
+  font-size:11.5px;font-weight:600;cursor:pointer;
+}
+#premium-quick-create button:hover{border-color:var(--amber-500);transform:translateY(-1px)}
+
+#premium-mobile-actions{
+  display:none;position:fixed;left:10px;right:10px;bottom:10px;z-index:45;
+  padding:7px;border-radius:16px;background:rgba(250,251,253,.9);
+  border:1px solid rgba(255,255,255,.75);box-shadow:0 14px 38px rgba(15,25,40,.16);
+  backdrop-filter:blur(18px);
+}
+#premium-mobile-actions button{
+  flex:1;min-width:0;height:38px;border:0;border-radius:10px;
+  background:transparent;cursor:pointer;font-size:15px;
+}
+#premium-mobile-actions button:hover{background:rgba(0,0,0,.06)}
+.premium-modal-section{
+  padding:12px;border:1px solid var(--border-soft);border-radius:13px;
+  background:rgba(255,255,255,.34);margin-top:10px;
+}
+.premium-modal-section h4{margin:0 0 5px;font-size:12px}
+.premium-modal-section p{margin:0;font-size:11px;color:var(--text-muted);line-height:1.45}
+
+@media(max-width:900px){
+  #premium-dashboard{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:650px){
+  #premium-dashboard{grid-template-columns:repeat(2,1fr)}
+  .premium-toolbar .premium-count{width:100%}
+  #premium-mobile-actions{display:flex}
+  #notarium-bottom-bar{bottom:62px!important}
+}
+</style>
+
+<script id="notarium-premium-upgrade-js">
+(() => {
+  'use strict';
+
+  const P = {
+    filter: 'all',
+    sort: 'manual',
+    trashOpen: false
+  };
+
+  const esc = s => typeof escapeHtml === 'function' ? escapeHtml(String(s ?? '')) :
+    String(s ?? '').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+  function ensureState(){
+    if(!window.STATE) return;
+    if(!Array.isArray(STATE.trash)) STATE.trash=[];
+    Object.values(STATE.nodes||{}).forEach(n=>{
+      if(!Array.isArray(n.tags)) n.tags=[];
+      if(typeof n.favorite!=='boolean') n.favorite=false;
+      if(!n.updatedAt) n.updatedAt=n.createdAt||Date.now();
+    });
+  }
+
+  function touch(node){
+    if(node) node.updatedAt=Date.now();
+  }
+
+  /* ---------- Safe trash implementation ---------- */
+  function snapshotTree(rootId){
+    const root=STATE.nodes[rootId];
+    if(!root) return null;
+    const nodes={},pages={};
+
+    function walk(id){
+      const n=STATE.nodes[id];
+      if(!n) return;
+      nodes[id]=deepClone(n);
+      if(n.type==='notebook'){
+        (n.pageOrder||[]).forEach(pid=>{
+          if(STATE.pages[pid]) pages[pid]=deepClone(STATE.pages[pid]);
+        });
+      }
+      if(n.type==='folder'){
+        Object.values(STATE.nodes).filter(x=>x.parentId===id).forEach(x=>walk(x.id));
+      }
+    }
+    walk(rootId);
+    return {
+      rootId,
+      name:root.name,
+      type:root.type,
+      deletedAt:Date.now(),
+      nodes,
+      pages
+    };
+  }
+
+  function hardRemoveTree(rootId){
+    const root=STATE.nodes[rootId];
+    if(!root) return;
+    const ids=[];
+    const walk=id=>{
+      const n=STATE.nodes[id]; if(!n) return;
+      ids.push(id);
+      if(n.type==='folder'){
+        Object.values(STATE.nodes).filter(x=>x.parentId===id).forEach(x=>walk(x.id));
+      }
+    };
+    walk(rootId);
+    ids.forEach(id=>{
+      const n=STATE.nodes[id];
+      if(n?.type==='notebook') (n.pageOrder||[]).forEach(pid=>delete STATE.pages[pid]);
+    });
+    ids.forEach(id=>delete STATE.nodes[id]);
+    STATE.rootOrder=(STATE.rootOrder||[]).filter(id=>!ids.includes(id));
+  }
+
+  window.deleteNodeRecursive = function(id){
+    ensureState();
+    const snap=snapshotTree(id);
+    if(!snap) return;
+    hardRemoveTree(id);
+    STATE.trash.unshift(snap);
+    queueSave();
+    if(NAV.folderId===id){NAV.folderId=null;showView('library');}
+    if(NAV.notebookId===id){NAV.notebookId=null;NAV.pageId=null;showView('library');}
+    renderSidebarTree();renderLibrary();renderCrumbs();
+    updateTrashBadge();
+    toast('In den Papierkorb verschoben');
+  };
+
+  function restoreItem(index){
+    const item=STATE.trash[index]; if(!item) return;
+    Object.values(item.nodes).forEach(n=>{
+      const copy=deepClone(n);
+      if(copy.id===item.rootId && copy.parentId && !STATE.nodes[copy.parentId]) copy.parentId=null;
+      STATE.nodes[copy.id]=copy;
+    });
+    Object.values(item.pages).forEach(p=>STATE.pages[p.id]=deepClone(p));
+
+    const root=STATE.nodes[item.rootId];
+    if(root.parentId && STATE.nodes[root.parentId]){
+      root.order=nextOrder(root.parentId);
+    }else{
+      root.parentId=null;
+      root.order=STATE.rootOrder.length
+        ? Math.max(...STATE.rootOrder.map(id=>STATE.nodes[id]?.order??0))+1 : 0;
+      if(!STATE.rootOrder.includes(root.id)) STATE.rootOrder.push(root.id);
+    }
+
+    STATE.trash.splice(index,1);
+    queueSave();updateTrashBadge();
+    P.trashOpen=false;
+    renderSidebarTree();renderLibrary();renderCrumbs();
+    toast('Wiederhergestellt');
+  }
+
+  function deleteTrashItem(index){
+    const item=STATE.trash[index]; if(!item) return;
+    if(!confirm(`„${item.name}“ endgültig löschen?\n\nDieser Vorgang kann nicht rückgängig gemacht werden.`)) return;
+    STATE.trash.splice(index,1);
+    queueSave();renderTrash();updateTrashBadge();
+    toast('Endgültig gelöscht');
+  }
+
+  function emptyTrash(){
+    if(!STATE.trash.length) return;
+    if(!confirm('Den gesamten Papierkorb endgültig leeren?')) return;
+    STATE.trash=[];queueSave();renderTrash();updateTrashBadge();toast('Papierkorb geleert');
+  }
+
+  function updateTrashBadge(){
+    const btn=document.getElementById('premium-trash-button');
+    if(!btn) return;
+    let badge=btn.querySelector('.premium-trash-count');
+    if(!badge){
+      badge=document.createElement('span');
+      badge.className='premium-trash-count';
+      badge.style.cssText='position:absolute;right:1px;top:1px;min-width:15px;height:15px;border-radius:99px;background:var(--amber-500);color:var(--ink-900);font-size:9px;font-weight:800;display:grid;place-items:center';
+      btn.appendChild(badge);
+    }
+    const n=STATE?.trash?.length||0;
+    badge.textContent=n>99?'99+':n;
+    badge.style.display=n?'grid':'none';
+  }
+
+  function renderTrash(){
+    ensureState();
+    const grid=document.getElementById('library-grid');
+    const heading=document.getElementById('library-heading');
+    if(!grid||!heading) return;
+
+    P.trashOpen=true;
+    heading.textContent='Papierkorb';
+    grid.innerHTML='';
+
+    document.querySelector('.premium-trash-actions')?.remove();
+    const wrap=document.querySelector('#view-library .grid-wrap');
+
+    const actions=document.createElement('div');
+    actions.className='library-tools premium-toolbar premium-trash-actions';
+    actions.innerHTML=`<span class="premium-count">🗑️ ${STATE.trash.length} Einträge</span>
+      <span class="premium-spacer"></span>
+      <button class="filter-btn" id="premium-trash-empty">Papierkorb leeren</button>`;
+    wrap.insertBefore(actions,grid);
+    actions.querySelector('#premium-trash-empty').onclick=emptyTrash;
+
+    if(!STATE.trash.length){
+      grid.innerHTML=`<div class="premium-trash-empty"><div class="big">🗑️</div>
+        <h3 style="color:var(--text-main);margin:0 0 5px">Papierkorb ist leer</h3>
+        <div>Gelöschte Notizbücher und Ordner werden hier vorübergehend aufbewahrt.</div></div>`;
+      return;
+    }
+
+    STATE.trash.forEach((item,i)=>{
+      const card=document.createElement('div');
+      card.className='card premium-trash-card';
+      card.innerHTML=`<div class="card-thumb"><div style="font-size:34px">🗑️</div></div>
+        <button class="premium-trash-delete" title="Endgültig löschen">×</button>
+        <button class="premium-restore">↩ Wiederherstellen</button>
+        <div class="card-name">${esc(item.name)}</div>
+        <div class="card-meta">${item.type==='folder'?'Ordner':'Notizbuch'} · ${new Date(item.deletedAt).toLocaleDateString('de-DE')}</div>`;
+      card.querySelector('.premium-restore').onclick=e=>{e.stopPropagation();restoreItem(i)};
+      card.querySelector('.premium-trash-delete').onclick=e=>{e.stopPropagation();deleteTrashItem(i)};
+      grid.appendChild(card);
+    });
+  }
+
+  /* ---------- Library toolbar ---------- */
+  function ensureLibraryToolbar(){
+    const wrap=document.querySelector('#view-library .grid-wrap');
+    const heading=document.getElementById('library-heading');
+    if(!wrap||!heading||wrap.querySelector('.premium-toolbar:not(.premium-trash-actions)')) return;
+
+    const bar=document.createElement('div');
+    bar.className='library-tools premium-toolbar';
+    bar.innerHTML=`<button class="filter-btn active" data-premium-filter="all">Alle</button>
+      <button class="filter-btn" data-premium-filter="favorites">⭐ Favoriten</button>
+      <button class="filter-btn" data-premium-filter="recent">🕘 Zuletzt</button>
+      <button class="filter-btn" data-premium-filter="tagged">🏷️ Getaggt</button>
+      <span class="premium-spacer"></span>
+      <select id="premium-sort" aria-label="Sortierung">
+        <option value="manual">Manuelle Reihenfolge</option>
+        <option value="name">Name A–Z</option>
+        <option value="newest">Zuletzt geändert</option>
+        <option value="favorites">Favoriten zuerst</option>
+      </select>
+      <span class="premium-count" id="premium-visible-count"></span>`;
+    heading.insertAdjacentElement('afterend',bar);
+
+    bar.querySelectorAll('[data-premium-filter]').forEach(btn=>{
+      btn.onclick=()=>{
+        P.filter=btn.dataset.premiumFilter;
+        P.trashOpen=false;
+        bar.querySelectorAll('[data-premium-filter]').forEach(x=>x.classList.toggle('active',x===btn));
+        renderLibrary();
+      };
+    });
+    bar.querySelector('#premium-sort').onchange=e=>{
+      P.sort=e.target.value;renderLibrary();
+    };
+  }
+
+  function updateLibraryCards(){
+    const grid=document.getElementById('library-grid');
+    if(!grid || NAV.view!=='library' || P.trashOpen) return;
+    const cards=[...grid.querySelectorAll('.card[data-id]')];
+    const nodes=Object.fromEntries(Object.values(STATE.nodes||{}).map(n=>[n.id,n]));
+
+    let visible=0;
+    cards.forEach(card=>{
+      const n=nodes[card.dataset.id]; if(!n){card.style.display='none';return;}
+      let show=true;
+      if(P.filter==='favorites') show=!!n.favorite;
+      if(P.filter==='tagged') show=Array.isArray(n.tags)&&n.tags.length>0;
+      if(P.filter==='recent'){
+        const age=Date.now()-(n.updatedAt||n.createdAt||0);
+        show=age<=1000*60*60*24*30;
+      }
+      card.style.display=show?'':'none';
+      if(show) visible++;
+
+      if(n.type==='notebook'){
+        let info=card.querySelector('.premium-card-info');
+        if(!info){
+          info=document.createElement('div');
+          info.className='premium-card-info';
+          card.appendChild(info);
+        }
+        const tags=(n.tags||[]).slice(0,3).map(t=>`<span class="premium-tag">#${esc(t)}</span>`).join('');
+        const changed=n.updatedAt||n.createdAt;
+        info.innerHTML=tags+(changed?`<span class="premium-updated">${new Date(changed).toLocaleDateString('de-DE')}</span>`:'');
+      }
+    });
+
+    if(P.sort!=='manual'){
+      const sorted=cards.slice().sort((a,b)=>{
+        const A=nodes[a.dataset.id],B=nodes[b.dataset.id];
+        if(P.sort==='name') return String(A?.name||'').localeCompare(String(B?.name||''),'de');
+        if(P.sort==='newest') return (B?.updatedAt||B?.createdAt||0)-(A?.updatedAt||A?.createdAt||0);
+        if(P.sort==='favorites') return Number(!!B?.favorite)-Number(!!A?.favorite) ||
+          String(A?.name||'').localeCompare(String(B?.name||''),'de');
+        return 0;
+      });
+      sorted.forEach(c=>grid.appendChild(c));
+    }
+    const count=document.getElementById('premium-visible-count');
+    if(count) count.textContent=`${visible} sichtbar`;
+  }
+
+  const originalRenderLibrary=window.renderLibrary;
+  if(typeof originalRenderLibrary==='function'){
+    window.renderLibrary=function(){
+      ensureState();
+      ensureLibraryToolbar();
+      originalRenderLibrary();
+      updateLibraryCards();
+      updateTrashBadge();
+    };
+  }
+
+  /* ---------- Dashboard ---------- */
+  function addDashboard(){
+    const wrap=document.querySelector('#view-library .grid-wrap');
+    const heading=document.getElementById('library-heading');
+    if(!wrap||!heading||document.getElementById('premium-dashboard')) return;
+
+    const d=document.createElement('div');
+    d.id='premium-dashboard';
+    d.innerHTML=`<div class="premium-stat"><b id="ps-books">0</b><span>Notizbücher</span></div>
+      <div class="premium-stat"><b id="ps-pages">0</b><span>Seiten</span></div>
+      <div class="premium-stat"><b id="ps-favs">0</b><span>Favoriten</span></div>
+      <div class="premium-stat"><b id="ps-tags">0</b><span>Tags</span></div>`;
+    heading.insertAdjacentElement('afterend',d);
+
+    const q=document.createElement('div');
+    q.id='premium-quick-create';
+    q.innerHTML=`<button id="pq-notebook">＋ Notizbuch</button>
+      <button id="pq-folder">＋ Ordner</button>
+      <button id="pq-backup">💾 Backup</button>
+      <button id="pq-extras">✨ Extras</button>`;
+    d.insertAdjacentElement('afterend',q);
+    document.getElementById('pq-notebook').onclick=()=>openNewNotebookModal();
+    document.getElementById('pq-folder').onclick=()=>openNewFolderModal();
+    document.getElementById('pq-backup').onclick=()=>exportBackup();
+    document.getElementById('pq-extras').onclick=()=>openUltimateHub();
+  }
+
+  function updateDashboard(){
+    const d=document.getElementById('premium-dashboard');
+    if(!d||!window.STATE) return;
+    const nodes=Object.values(STATE.nodes||{});
+    const pages=Object.values(STATE.pages||{});
+    const books=nodes.filter(n=>n.type==='notebook');
+    const favs=books.filter(n=>n.favorite).length;
+    const tags=new Set(books.flatMap(n=>n.tags||[])).size;
+    const put=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
+    put('ps-books',books.length);put('ps-pages',pages.length);put('ps-favs',favs);put('ps-tags',tags);
+  }
+
+  /* ---------- Better data center ---------- */
+  function enhanceDataPane(){
+    const pane=document.getElementById('pane-data');
+    if(!pane||pane.querySelector('.premium-data-box')) return;
+    const box=document.createElement('div');
+    box.className='premium-data-box';
+    box.innerHTML=`<b>Speicher & Sicherheit</b>
+      <div id="premium-storage-text" style="margin-top:4px">Lokaler Speicher wird geprüft…</div>
+      <div class="premium-progress"><i id="premium-storage-progress"></i></div>`;
+    pane.appendChild(box);
+
+    if(navigator.storage?.estimate){
+      navigator.storage.estimate().then(x=>{
+        const used=x.usage||0, quota=x.quota||0;
+        const pct=quota?Math.min(100,used/quota*100):0;
+        const mb=(used/1024/1024).toFixed(1);
+        const gb=(quota/1024/1024/1024).toFixed(1);
+        document.getElementById('premium-storage-text').textContent =
+          `Notarium speichert lokal auf diesem Gerät · ${mb} MB genutzt von ca. ${gb} GB verfügbar.`;
+        document.getElementById('premium-storage-progress').style.width=pct+'%';
+      }).catch(()=>{});
+    }
+  }
+
+  /* ---------- Personal accent color, persisted ---------- */
+  function addAccentControl(){
+    const pane=document.getElementById('pane-themes');
+    if(!pane||pane.querySelector('.premium-accent')) return;
+    const saved=localStorage.getItem('notarium-premium-accent')||'#D98E2B';
+    const box=document.createElement('div');
+    box.className='premium-modal-section premium-accent';
+    box.innerHTML=`<h4>🎨 Eigene Akzentfarbe</h4>
+      <p>Eine eigene Farbe für Buttons, Markierungen und Highlights.</p>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:9px">
+        <input id="premium-accent-input" type="color" value="${saved}" style="width:38px;height:32px;padding:2px">
+        <button class="btn btn-primary" id="premium-accent-apply">Anwenden</button>
+        <button class="btn btn-ghost" id="premium-accent-reset">Zurücksetzen</button>
+      </div>`;
+    pane.appendChild(box);
+    box.querySelector('#premium-accent-apply').onclick=()=>{
+      const c=box.querySelector('#premium-accent-input').value;
+      document.documentElement.style.setProperty('--amber-500',c);
+      document.documentElement.style.setProperty('--amber-600',c);
+      localStorage.setItem('notarium-premium-accent',c);
+      toast('Eigene Akzentfarbe angewendet');
+    };
+    box.querySelector('#premium-accent-reset').onclick=()=>{
+      localStorage.removeItem('notarium-premium-accent');
+      if(typeof applyTheme==='function') applyTheme(document.body.dataset.ultimateTheme||'classic',false);
+      toast('Akzentfarbe zurückgesetzt');
+    };
+  }
+
+  /* ---------- Trash button ---------- */
+  function addTrashButton(){
+    const footer=document.querySelector('.side-footer');
+    if(!footer||document.getElementById('premium-trash-button')) return;
+    const b=document.createElement('button');
+    b.className='icon-btn';b.id='premium-trash-button';b.title='Papierkorb';
+    b.style.position='relative';b.innerHTML='🗑️';
+    b.onclick=()=>{
+      NAV.folderId=null;NAV.notebookId=null;NAV.pageId=null;
+      showView('library');renderTrash();renderCrumbs();updateTrashBadge();
+    };
+    const collapse=document.getElementById('btn-collapse');
+    footer.insertBefore(b,collapse||null);
+    updateTrashBadge();
+  }
+
+  /* ---------- Mobile quick bar ---------- */
+  function addMobileActions(){
+    if(document.getElementById('premium-mobile-actions')) return;
+    const bar=document.createElement('div');
+    bar.id='premium-mobile-actions';
+    bar.innerHTML=`<button title="Notizbuch">📘</button>
+      <button title="Ordner">📁</button>
+      <button title="Suche">🔎</button>
+      <button title="Extras">✨</button>
+      <button title="Papierkorb">🗑️</button>`;
+    document.body.appendChild(bar);
+    const b=bar.querySelectorAll('button');
+    b[0].onclick=()=>openNewNotebookModal();
+    b[1].onclick=()=>openNewFolderModal();
+    b[2].onclick=()=>document.getElementById('search-input')?.focus();
+    b[3].onclick=()=>openUltimateHub();
+    b[4].onclick=()=>{showView('library');renderTrash();renderCrumbs()};
+  }
+
+  /* ---------- Improve Extras center without replacing its logic ---------- */
+  const oldHub=window.openUltimateHub;
+  if(typeof oldHub==='function'){
+    window.openUltimateHub=function(){
+      oldHub();
+      setTimeout(()=>{
+        addAccentControl();
+        enhanceDataPane();
+        const modal=document.querySelector('#modal-content .ultimate-modal');
+        if(modal) modal.setAttribute('aria-label','Notarium Extras');
+      },30);
+    };
+  }
+
+  /* ---------- Autosave status in topbar ---------- */
+  function addTopStatus(){
+    const bar=document.querySelector('.topbar');
+    if(!bar||document.getElementById('premium-top-status')) return;
+    const status=document.createElement('div');
+    status.id='premium-top-status';
+    status.className='np-status';
+    status.innerHTML='<span class="np-dot"></span><span>Bereit</span>';
+    const search=document.querySelector('.search-box');
+    if(search) search.before(status);
+    else bar.appendChild(status);
+
+    const originalSet=window.setSaveIndicator;
+    if(typeof originalSet==='function'){
+      window.setSaveIndicator=function(text,color){
+        originalSet(text,color);
+        const dot=status.querySelector('.np-dot'),label=status.querySelector('span:last-child');
+        if(dot) dot.style.background=color||'#54a879';
+        if(label) label.textContent=text;
+      };
+    }
+  }
+
+  /* ---------- Better keyboard shortcuts ---------- */
+  document.addEventListener('keydown',e=>{
+    const typing=['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName);
+    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='f'&&!typing){
+      e.preventDefault();
+      const s=document.getElementById('search-input');if(s){s.focus();s.select();}
+    }
+    if(e.key==='Escape'){
+      document.querySelector('.premium-trash-actions')?.remove();
+      P.trashOpen=false;
+    }
+  });
+
+  /* ---------- Boot after the existing app has initialized ---------- */
+  function boot(){
+    if(!window.STATE) return;
+    ensureState();
+    addDashboard();
+    ensureLibraryToolbar();
+    addTrashButton();
+    addMobileActions();
+    addTopStatus();
+    updateDashboard();
+
+    const custom=localStorage.getItem('notarium-premium-accent');
+    if(custom){
+      document.documentElement.style.setProperty('--amber-500',custom);
+      document.documentElement.style.setProperty('--amber-600',custom);
+    }
+
+    const oldRender=window.renderLibrary;
+    if(typeof oldRender==='function'){
+      /* Avoid stale dashboard values after every render. */
+      const mark=oldRender;
+      window.renderLibrary=function(){
+        mark();
+        updateDashboard();
+      };
+    }
+
+    updateTrashBadge();
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,50));
+  else setTimeout(boot,50);
+})();
+</script>
+
+
+<style id="notarium-math-studio-css">
+  .math-studio{width:min(1180px,96vw);max-height:90vh;overflow:hidden;padding:0!important}
+  .math-head{padding:20px 22px 12px;border-bottom:1px solid var(--border-soft)}
+  .math-headline{display:flex;align-items:center;gap:12px}
+  .math-pi{width:40px;height:40px;border-radius:12px;background:var(--amber-500);color:var(--ink-900);display:grid;place-items:center;font:700 25px Georgia,serif}
+  .math-head h3{margin:0;font-size:20px}.math-head p{margin:3px 0 0;color:var(--text-muted);font-size:11px}
+  .math-search{margin-top:13px;width:100%;box-sizing:border-box}
+  .math-tabs{display:flex;gap:7px;overflow:auto;padding:10px 22px;border-bottom:1px solid var(--border-soft)}
+  .math-tab{border:1px solid var(--border-soft);background:var(--bg-surface);color:var(--text-main);border-radius:999px;padding:7px 11px;font-size:11px;cursor:pointer;white-space:nowrap}
+  .math-tab.active{background:var(--amber-500);border-color:var(--amber-500);color:var(--ink-900);font-weight:700}
+  .math-body{display:grid;grid-template-columns:minmax(0,1fr) 310px;min-height:520px}
+  .math-grid{padding:16px 20px;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;align-content:start}
+  .math-card{position:relative;border:1px solid var(--border-soft);background:var(--bg-surface);border-radius:13px;overflow:hidden;cursor:pointer;transition:.15s}
+  .math-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-1);border-color:var(--amber-500)}
+  .math-thumb{height:142px;background:#fff;border-bottom:1px solid var(--border-soft);display:grid;place-items:center}
+  .math-thumb svg{width:100%;height:100%;display:block}
+  .math-card-body{padding:9px 10px 11px}.math-card-body b{font-size:12px}.math-card-body small{display:block;margin-top:4px;color:var(--text-muted);font-size:10px;line-height:1.35}
+  .math-kind{display:inline-block;margin-bottom:5px;padding:2px 6px;border-radius:99px;background:var(--paper-200);font-size:8.5px;color:var(--text-muted)}
+  .math-fav{position:absolute;right:7px;top:7px;border:0;width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.9);cursor:pointer}
+  .math-side{border-left:1px solid var(--border-soft);padding:16px;background:rgba(255,255,255,.25);overflow:auto}
+  .math-preview{background:#fff;border:1px solid var(--border-soft);border-radius:10px;overflow:hidden;aspect-ratio:4/3}
+  .math-side h4{font-size:15px;margin:12px 0 5px}.math-side p{font-size:10.5px;color:var(--text-muted);line-height:1.45}
+  .math-checks{font-size:10.5px;line-height:1.8;color:var(--text-muted);margin:10px 0}
+  .math-checks div::before{content:'✓';color:#3d9b6b;font-weight:800;margin-right:7px}
+  .math-actions{display:grid;gap:7px;margin-top:12px}.math-actions button{width:100%}
+  .math-related{margin-top:16px;border-top:1px solid var(--border-soft);padding-top:12px}
+  .math-related button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:7px 4px;border-radius:8px;color:var(--text-main);font-size:10px;cursor:pointer}
+  .math-related button:hover{background:var(--paper-200)}
+  @media(max-width:850px){.math-body{grid-template-columns:1fr}.math-side{border-left:0;border-top:1px solid var(--border-soft)}}
+</style>
+
+<script id="notarium-math-studio-js">
+(() => {
+  const MATH = [
+    {id:'coord2d',name:'2D-Koordinatensystem',cat:'Geometrie',desc:'Kartesisches Koordinatensystem mit Achsen und Skalierung.'},
+    {id:'coord3d',name:'3D-Koordinatensystem',cat:'Geometrie',desc:'Räumliches Koordinatensystem mit x-, y- und z-Achse.'},
+    {id:'vectors',name:'Vektoren',cat:'Algebra',desc:'Vektoren im 2D- und 3D-Raum mit Komponenten.'},
+    {id:'triangle',name:'Dreieck',cat:'Geometrie',desc:'Dreieck mit Seiten, Winkeln und Beschriftungen.'},
+    {id:'circle',name:'Kreis',cat:'Geometrie',desc:'Radius, Durchmesser, Mittelpunkt und Umfang.'},
+    {id:'cube3d',name:'Würfel (3D)',cat:'Geometrie',desc:'3D-Objekt mit Kanten, Flächen und Achsen.'},
+    {id:'parabola',name:'Parabel',cat:'Analysis',desc:'Koordinatensystem mit quadratischer Funktion.'},
+    {id:'trig',name:'Trigonometrische Funktionen',cat:'Analysis',desc:'Sinus, Cosinus und Tangens im Koordinatensystem.'},
+    {id:'numberline',name:'Zahlenstrahl',cat:'Algebra',desc:'Zahlenstrahl mit positiven und negativen Werten.'},
+    {id:'matrix',name:'Matrix',cat:'Algebra',desc:'Vorlage für Matrizenrechnung und lineare Algebra.'},
+    {id:'probability',name:'Wahrscheinlichkeit',cat:'Statistik',desc:'Baumdiagramm für Wahrscheinlichkeitsaufgaben.'},
+    {id:'integral',name:'Integral',cat:'Analysis',desc:'Funktionsgraph mit markierter Fläche unter der Kurve.'},
+    {id:'formula',name:'Formelsammlung',cat:'Formeln',desc:'Übersicht für wichtige mathematische Formeln.'},
+    {id:'geometry',name:'Geometrische Formen',cat:'Geometrie',desc:'Sammlung grundlegender geometrischer Figuren.'}
+  ];
+  let selected=MATH[1], filter='Alle', query='';
+
+  const esc=s=>escapeHtml(String(s||''));
+
+  function svg(id){
+    const common=`<rect width="800" height="600" fill="#fff"/><defs><pattern id="g" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#d9e0e8" stroke-width="1"/></pattern></defs><rect x="25" y="25" width="750" height="550" fill="url(#g)"/>`;
+    const ax=`<g stroke="#26374b" stroke-width="4"><line x1="90" y1="300" x2="710" y2="300"/><line x1="400" y1="530" x2="400" y2="70"/></g><g fill="#26374b" font-family="Arial" font-size="22"><text x="720" y="292">x</text><text x="410" y="62">y</text></g>`;
+    if(id==='coord2d') return `<svg viewBox="0 0 800 600">${common}${ax}<g stroke="#6d7887" stroke-width="1.5">${Array.from({length:15},(_,i)=>`<line x1="${100+i*40}" y1="292" x2="${100+i*40}" y2="308"/><line x1="392" y1="${100+i*30}" x2="408" y2="${100+i*30}"/>`).join('')}</g></svg>`;
+    if(id==='coord3d') return `<svg viewBox="0 0 800 600">${common}<g stroke-width="7" stroke-linecap="round"><line x1="400" y1="330" x2="670" y2="250" stroke="#38a86b"/><line x1="400" y1="330" x2="205" y2="455" stroke="#e14b4b"/><line x1="400" y1="330" x2="400" y2="75" stroke="#2867c8"/></g><g stroke="#9aa6b5" stroke-width="2" fill="none"><path d="M210 455L480 375L670 250"/><path d="M210 455L210 310L400 225L670 250"/><path d="M400 330L400 225"/></g><g font-family="Arial" font-size="24" font-weight="700"><text x="680" y="245" fill="#38a86b">y</text><text x="180" y="475" fill="#e14b4b">x</text><text x="410" y="68" fill="#2867c8">z</text></g></svg>`;
+    if(id==='vectors') return `<svg viewBox="0 0 800 600">${common}${ax}<g stroke="#d94b45" stroke-width="8"><line x1="400" y1="300" x2="610" y2="150"/><path d="M610 150l-28 4 15 20z" fill="#d94b45"/></g><g font-family="Arial" font-size="26" fill="#d94b45"><text x="505" y="205">v⃗</text></g></svg>`;
+    if(id==='triangle') return `<svg viewBox="0 0 800 600">${common}<path d="M170 470L400 110L690 470Z" fill="none" stroke="#26374b" stroke-width="6"/><path d="M400 110L400 470" stroke="#8793a3" stroke-width="3" stroke-dasharray="10 8"/><g font-family="Arial" font-size="25" fill="#26374b"><text x="145" y="495">A</text><text x="395" y="90">C</text><text x="695" y="495">B</text><text x="270" y="485">a</text><text x="530" y="485">c</text><text x="420" y="290">h</text></g></svg>`;
+    if(id==='circle') return `<svg viewBox="0 0 800 600">${common}<circle cx="400" cy="300" r="180" fill="none" stroke="#26374b" stroke-width="6"/><line x1="400" y1="300" x2="580" y2="300" stroke="#d98e2b" stroke-width="7"/><line x1="220" y1="300" x2="580" y2="300" stroke="#9aa6b5" stroke-width="2" stroke-dasharray="8 8"/><circle cx="400" cy="300" r="7" fill="#d98e2b"/><text x="485" y="285" font-family="Arial" font-size="26" fill="#d98e2b">r</text></svg>`;
+    if(id==='cube3d') return `<svg viewBox="0 0 800 600">${common}<g fill="none" stroke="#26374b" stroke-width="5"><path d="M220 400L420 330L610 390L410 465Z"/><path d="M220 400L220 190L420 120L420 330"/><path d="M420 120L610 180L610 390"/><path d="M220 190L410 250L610 180"/><path d="M410 250L410 465"/></g><g stroke-width="6"><line x1="410" y1="330" x2="680" y2="270" stroke="#38a86b"/><line x1="410" y1="330" x2="210" y2="455" stroke="#e14b4b"/><line x1="410" y1="330" x2="410" y2="65" stroke="#2867c8"/></g></svg>`;
+    if(id==='parabola') return `<svg viewBox="0 0 800 600">${common}${ax}<path d="M170 100 Q400 500 630 100" fill="none" stroke="#2867c8" stroke-width="7"/><text x="515" y="145" font-family="Arial" font-size="26" fill="#2867c8">f(x)=x²</text></svg>`;
+    if(id==='trig') return `<svg viewBox="0 0 800 600">${common}${ax}<path d="M90 300 C140 120 190 480 240 300 S340 120 390 300 S490 480 540 300 S640 120 710 300" fill="none" stroke="#d94b45" stroke-width="5"/><path d="M90 300 C140 480 190 120 240 300 S340 480 390 300 S490 120 540 300 S640 480 710 300" fill="none" stroke="#38a86b" stroke-width="5"/><text x="620" y="125" font-family="Arial" font-size="23" fill="#d94b45">sin(x)</text><text x="620" y="155" font-family="Arial" font-size="23" fill="#38a86b">cos(x)</text></svg>`;
+    if(id==='numberline') return `<svg viewBox="0 0 800 600">${common}<line x1="90" y1="300" x2="710" y2="300" stroke="#26374b" stroke-width="6"/><g stroke="#26374b" stroke-width="4" font-family="Arial" font-size="20">${Array.from({length:13},(_,i)=>{let x=110+i*50;return `<line x1="${x}" y1="286" x2="${x}" y2="314"/><text x="${x-7}" y="345">${i-6}</text>`}).join('')}</g></svg>`;
+    if(id==='matrix') return `<svg viewBox="0 0 800 600">${common}<text x="150" y="330" font-family="Georgia" font-size="54" fill="#26374b">A =</text><path d="M300 180V420M300 180H650M300 420H650M650 180V420" fill="none" stroke="#26374b" stroke-width="6"/><g font-family="Georgia" font-size="42" fill="#26374b"><text x="360" y="250">1   2   3</text><text x="360" y="315">0   1   4</text><text x="360" y="380">5   6   0</text></g></svg>`;
+    if(id==='probability') return `<svg viewBox="0 0 800 600">${common}<g stroke="#26374b" stroke-width="4" fill="none"><path d="M140 300L330 180M140 300L330 420M330 180L560 110M330 180L560 250M330 420L560 350M330 420L560 490"/></g><g font-family="Arial" font-size="24" fill="#26374b"><text x="120" y="290">Start</text><text x="350" y="170">A</text><text x="350" y="415">B</text><text x="575" y="105">A₁</text><text x="575" y="245">A₂</text><text x="575" y="345">B₁</text><text x="575" y="485">B₂</text></g></svg>`;
+    if(id==='integral') return `<svg viewBox="0 0 800 600">${common}${ax}<path d="M100 470 Q200 150 300 330 T500 190 T700 420" fill="none" stroke="#2867c8" stroke-width="6"/><path d="M180 300 Q240 210 300 330 T420 240 L420 300Z" fill="#d98e2b" opacity=".28"/><text x="520" y="140" font-family="Georgia" font-size="32" fill="#26374b">∫ f(x) dx</text></svg>`;
+    if(id==='formula') return `<svg viewBox="0 0 800 600">${common}<g font-family="Georgia" font-size="30" fill="#26374b"><text x="90" y="115">a² + b² = c²</text><text x="90" y="180">A = πr²</text><text x="90" y="245">U = 2πr</text><text x="90" y="310">y = mx + b</text><text x="90" y="375">x = (−b ± √(b²−4ac)) / 2a</text><text x="90" y="440">P(A) = n(A) / n(Ω)</text></g></svg>`;
+    return `<svg viewBox="0 0 800 600">${common}<g fill="none" stroke="#26374b" stroke-width="6"><circle cx="190" cy="190" r="70"/><rect x="330" y="120" width="140" height="140"/><path d="M600 260L520 120L680 120Z"/><rect x="120" y="370" width="140" height="100"/><path d="M350 470L430 370L510 470Z"/></g></svg>`;
+  }
+
+  function makeImageData(id){
+    return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg(id));
+  }
+
+  function importMathImage(item){
+    if(NAV.view!=='editor' || !STATE.pages[EDITOR.pageId]){
+      toast('Öffne zuerst eine Seite, um die Vorlage zu importieren.');
+      return;
+    }
+    const src=makeImageData(item.id), img=new Image();
+    img.onload=()=>{
+      const maxW=Math.min(560,PAGE_W-80), ratio=img.height/img.width;
+      const w=maxW,h=Math.min(maxW*ratio,PAGE_H-80);
+      const x=(PAGE_W-w)/2,y=(PAGE_H-h)/2;
+      const el={id:uid('el'),type:'image',x,y,width:w,height:h,rotation:0,src};
+      imgCache.set(src,img);
+      STATE.pages[EDITOR.pageId].elements.push(el);
+      EDITOR.selectedId=el.id;
+      pushHistory();renderCanvas();drawSelectionOverlay();queueSave();
+      closeModal();toast(`${item.name} importiert`);
+    };
+    img.src=src;
+  }
+
+  function downloadMathImage(item){
+    const a=document.createElement('a');
+    a.href=makeImageData(item.id);
+    a.download='Notarium-'+item.name.replace(/[^a-z0-9äöüß]+/gi,'-')+'.svg';
+    document.body.appendChild(a);a.click();a.remove();
+  }
+
+  function renderMathStudio(){
+    const cats=['Alle',...new Set(MATH.map(x=>x.cat))];
+    const list=MATH.filter(x=>(filter==='Alle'||x.cat===filter)&&(`${x.name} ${x.cat} ${x.desc}`).toLowerCase().includes(query.toLowerCase()));
+    openModal(`<div class="modal math-studio">
+      <div class="math-head">
+        <div class="math-headline"><div class="math-pi">π</div><div><h3>Mathematik</h3><p>Fertige Diagramme, Koordinatensysteme und mathematische Hilfsmittel für deine Notizen.</p></div></div>
+        <input class="math-search" id="math-search" placeholder="Mathe-Vorlagen suchen …" value="${esc(query)}">
+      </div>
+      <div class="math-tabs">${cats.map(c=>`<button class="math-tab ${c===filter?'active':''}" data-math-cat="${esc(c)}">${esc(c)}</button>`).join('')}</div>
+      <div class="math-body">
+        <div class="math-grid">${list.map(x=>`<article class="math-card" data-math-id="${x.id}">
+          <button class="math-fav" title="Favorit">♡</button>
+          <div class="math-thumb">${svg(x.id)}</div>
+          <div class="math-card-body"><span class="math-kind">${esc(x.cat)}</span><b>${esc(x.name)}</b><small>${esc(x.desc)}</small></div>
+        </article>`).join('') || `<div style="grid-column:1/-1;padding:50px;text-align:center;color:var(--text-muted)">Keine passende Vorlage gefunden.</div>`}</div>
+        <aside class="math-side">
+          <div class="math-preview" id="math-preview">${svg(selected.id)}</div>
+          <h4 id="math-selected-name">${esc(selected.name)}</h4>
+          <p id="math-selected-desc">${esc(selected.desc)}</p>
+          <div class="math-checks"><div>Als fertiges Bild importierbar</div><div>Skalierbar auf der Seite</div><div>Für Druck und PDF geeignet</div><div>Ohne externe Dienste erzeugt</div></div>
+          <div class="math-actions">
+            <button class="btn btn-primary" id="math-import">↓ In Notizbuch importieren</button>
+            <button class="btn btn-ghost" id="math-download">⇩ SVG exportieren</button>
+          </div>
+          <div class="math-related"><b style="font-size:11px">Ähnliche Vorlagen</b>
+            ${MATH.filter(x=>x.id!==selected.id).slice(0,5).map(x=>`<button data-math-related="${x.id}">${esc(x.name)} <span style="float:right">›</span></button>`).join('')}
+          </div>
+        </aside>
+      </div>
+      <div class="modal-actions"><button class="btn btn-ghost" id="math-close">Schließen</button></div>
+    </div>`);
+
+    const updateSelected=()=>{
+      document.getElementById('math-preview').innerHTML=svg(selected.id);
+      document.getElementById('math-selected-name').textContent=selected.name;
+      document.getElementById('math-selected-desc').textContent=selected.desc;
+      document.querySelectorAll('[data-math-id]').forEach(c=>c.style.outline=c.dataset.mathId===selected.id?'2px solid var(--amber-500)':'none');
+    };
+    document.querySelectorAll('[data-math-id]').forEach(c=>c.onclick=e=>{
+      if(e.target.closest('.math-fav')) return;
+      selected=MATH.find(x=>x.id===c.dataset.mathId)||selected;updateSelected();
+    });
+    document.querySelectorAll('.math-fav').forEach(b=>b.onclick=e=>{
+      e.stopPropagation();b.textContent=b.textContent==='♡'?'♥':'♡';
+    });
+    document.querySelectorAll('[data-math-cat]').forEach(b=>b.onclick=()=>{
+      filter=b.dataset.mathCat;renderMathStudio();
+    });
+    document.querySelectorAll('[data-math-related]').forEach(b=>b.onclick=()=>{
+      selected=MATH.find(x=>x.id===b.dataset.mathRelated)||selected;updateSelected();
+    });
+    document.getElementById('math-search').oninput=e=>{query=e.target.value;renderMathStudio()};
+    document.getElementById('math-import').onclick=()=>importMathImage(selected);
+    document.getElementById('math-download').onclick=()=>downloadMathImage(selected);
+    document.getElementById('math-close').onclick=closeModal;
+    updateSelected();
+  }
+
+  window.openMathStudio=()=>{filter='Alle';query='';selected=MATH[1];renderMathStudio()};
+
+  /* Add Mathematics to the existing Extras tabs. */
+  const originalHub=window.openUltimateHub;
+  if(typeof originalHub==='function'){
+    window.openUltimateHub=function(){
+      originalHub();
+      setTimeout(()=>{
+        const tabs=document.querySelectorAll('.ultimate-tab');
+        if(!tabs.length || document.getElementById('hub-math')) return;
+        const mathTab=document.createElement('button');
+        mathTab.className='ultimate-tab';
+        mathTab.id='hub-math';
+        mathTab.dataset.pane='math';
+        mathTab.textContent='📐 Mathematik';
+        tabs[tabs.length-1].insertAdjacentElement('afterend',mathTab);
+        const close=document.getElementById('ultimate-close')?.parentElement;
+        const pane=document.createElement('div');
+        pane.className='ultimate-pane';pane.id='pane-math';
+        pane.innerHTML=`<div class="ultimate-grid">
+          <div class="ultimate-card" id="math-coord2d"><strong>📈 2D Koordinatensystem</strong><small>Fertige Grafik importieren</small></div>
+          <div class="ultimate-card" id="math-coord3d"><strong>🧊 3D Koordinatensystem</strong><small>Räumliche Achsen importieren</small></div>
+          <div class="ultimate-card" id="math-vectors"><strong>➤ Vektoren</strong><small>Vektordiagramm</small></div>
+          <div class="ultimate-card" id="math-geometry"><strong>△ Geometrie</strong><small>Formen und Konstruktionen</small></div>
+          <div class="ultimate-card" id="math-analysis"><strong>∫ Analysis</strong><small>Funktionen und Integrale</small></div>
+          <div class="ultimate-card" id="math-algebra"><strong>Σ Algebra</strong><small>Matrizen und Zahlenstrahlen</small></div>
+          <div class="ultimate-card" id="math-stat"><strong>📊 Statistik</strong><small>Wahrscheinlichkeit</small></div>
+          <div class="ultimate-card" id="math-formula"><strong>ƒ Formelsammlung</strong><small>Formeln als Bild</small></div>
+        </div>
+        <div class="upgrade-info">Alle mathematischen Vorlagen werden <b>lokal als SVG-Bild</b> erzeugt. Du kannst sie direkt in deine aktuelle Seite importieren, verschieben, skalieren und anschließend als PNG/PDF exportieren.</div>
+        <div class="modal-actions"><button class="btn btn-primary" id="open-math-studio">Komplette Mathe-Galerie</button></div>`;
+        const dataPane=document.getElementById('pane-data');
+        const parent=dataPane?.parentElement;
+        if(parent) parent.insertBefore(pane,dataPane);
+        else document.querySelector('.ultimate-modal')?.appendChild(pane);
+        mathTab.onclick=()=>{
+          document.querySelectorAll('.ultimate-tab').forEach(t=>t.classList.remove('active'));
+          document.querySelectorAll('.ultimate-pane').forEach(p=>p.classList.remove('active'));
+          mathTab.classList.add('active');pane.classList.add('active');
+        };
+        document.getElementById('open-math-studio').onclick=openMathStudio;
+        const direct={
+          'math-coord2d':'coord2d','math-coord3d':'coord3d','math-vectors':'vectors',
+          'math-geometry':'geometry','math-analysis':'integral','math-algebra':'matrix',
+          'math-stat':'probability','math-formula':'formula'
+        };
+        Object.entries(direct).forEach(([id,mid])=>{
+          document.getElementById(id).onclick=()=>{
+            const item=MATH.find(x=>x.id===mid);
+            if(item) importMathImage(item);
+          };
+        });
+      },50);
+    };
+  }
+})();
+</script>
+
 </body>
 
 
