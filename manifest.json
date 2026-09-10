@@ -1,0 +1,17 @@
+{
+  "name": "Notarium — Dein digitales Notizbuch",
+  "short_name": "Notarium",
+  "description": "Digitales Notizbuch zum Schreiben, Zeichnen und Organisieren – mit Geometrie-Werkzeugen und PDF-Unterstützung.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F6F1E7",
+  "theme_color": "#16233D",
+  "lang": "de",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
